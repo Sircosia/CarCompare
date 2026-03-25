@@ -12,9 +12,34 @@
 :root{--red:#27AE60;--dark:#0A0F0A;--darker:#060906;--card:#121A12;--card2:#182018;--border:#1E2E1E;--text:#E8F5E8;--muted:#5A7A5A;--green:#27AE60;--score-ex:#16A34A;--score-good:#22C55E;--score-ok:#EAB308;--score-meh:#F97316;--score-bad:#EF4444;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;transition:background 0.3s,color 0.3s;}
-body.light-mode{--darker:#F5F5F5;--dark:#EBEBEB;--card:#FFFFFF;--card2:#F0F0F0;--border:#DDDDDD;--text:#1A1A1A;--muted:#666666;}
+body.light-mode{--darker:#F8F8F8;--dark:#EBEBEB;--card:#FFFFFF;--card2:#F0F0F0;--border:#DDDDDD;--text:#1A1A1A;--muted:#666666;--green:#1A8A40;}
 .toggle-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
 .toggle-btn:hover{border-color:var(--green);}
+.row-cg-odd{background:#0A130A;}.row-cg-even{background:#0D170D;}
+.row-at-odd{background:#080D18;}.row-at-even{background:#0A1020;}
+body.light-mode .row-cg-odd{background:#F0FAF0;}
+body.light-mode .row-cg-even{background:#E0F5E0;}
+body.light-mode .row-at-odd{background:#EBF5FB;}
+body.light-mode .row-at-even{background:#D6EAF8;}
+body.light-mode .header{background:#FFFFFF;border-bottom:2px solid #27AE60;}
+body.light-mode .controls{background:#F8F8F8;border-bottom:1px solid #DDD;}
+body.light-mode .legend{background:#FFFFFF;border-bottom:1px solid #DDD;}
+body.light-mode td{color:#1A1A1A;}
+body.light-mode th{color:#555;}
+body.light-mode .price-cell.resale{color:#16A34A;}
+body.light-mode .price-cell.depr-ann{color:#D68910;}
+body.light-mode .header-title{color:#1A1A1A;}
+body.light-mode .header-sub{color:#666;}
+body.light-mode .stat-pill{background:#F0F0F0;border-color:#DDD;}
+body.light-mode .editable{color:#1A1A1A;}
+body.light-mode .editable:hover{background:#E8E8E8;border-color:#CCC;}
+body.light-mode .editable:focus{background:#E8E8E8;border-color:#27AE60;}
+body.light-mode select.editable{background:#F0F0F0;}
+body.light-mode table{background:#FFFFFF;}
+body.light-mode thead tr{background:#F0F0F0;}
+body.light-mode .method-panel{background:#FFFFFF;border-color:#DDD;}
+body.light-mode .method-body{border-top-color:#DDD;}
+body.light-mode .score-bar-wrap{background:#DDD;}
 .header{background:linear-gradient(135deg,#050A05 0%,#0A1F0A 50%,#050A05 100%);border-bottom:2px solid var(--green);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo-badge{background:var(--green);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;padding:6px 14px;letter-spacing:2px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
 .header-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;}
@@ -269,9 +294,9 @@ function App(){
           {sorted.map((r,idx)=>{
             const [vLabel,vColor]=verdict(r[scoreMode]);
             const rank=idx+1;
-            const rf=r.src==="CarGurus.ca"?(idx%2===0?"#0D170D":"#0A130A"):(idx%2===0?"#0A1020":"#080D18");
+            const rf=r.src==="CarGurus.ca"?(idx%2===0?"row-cg-even":"row-cg-odd"):(idx%2===0?"row-at-even":"row-at-odd");
             const [dbg,dfc]=dealColor(r.deal);
-            return<tr key={r.id} style={{background:rf}}>
+            return<tr key={r.id} className={rf}>
               <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
               <td><EditCell value={r.src} options={["CarGurus.ca","AutoTrader.ca"]} onChange={v=>updateRow(r.id,"src",v)}/></td>
               <td><EditCell value={r.annee} type="number" onChange={v=>updateRow(r.id,"annee",v)}/></td>
