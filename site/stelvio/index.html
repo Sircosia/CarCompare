@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfa Romeo Stelvio Quadrifoglio — Scoring</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--red:#27AE60;--dark:#0A0F0A;--darker:#060906;--card:#121A12;--card2:#182018;--border:#1E2E1E;--text:#E8F5E8;--muted:#5A7A5A;--green:#27AE60;--score-ex:#16A34A;--score-good:#22C55E;--score-ok:#EAB308;--score-meh:#F97316;--score-bad:#EF4444;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;}
+.header{background:linear-gradient(135deg,#050A05 0%,#0A1F0A 50%,#050A05 100%);border-bottom:2px solid var(--green);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo-badge{background:var(--green);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;padding:6px 14px;letter-spacing:2px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;}
+.header-sub{color:var(--muted);font-size:11px;margin-top:2px;}
+.header-stats{display:flex;gap:16px;}
+.stat-pill{text-align:center;background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:4px;}
+.stat-pill .num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:var(--green);}
+.stat-pill .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.controls{padding:10px 28px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.controls label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.controls select,.controls input{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:6px 10px;font-size:12px;font-family:'Barlow',sans-serif;border-radius:3px;outline:none;cursor:pointer;}
+.controls select:focus{border-color:var(--green);}
+.ctrl-group{display:flex;align-items:center;gap:8px;}
+.sep{width:1px;height:28px;background:var(--border);}
+.btn-add{background:var(--green);color:#fff;border:none;padding:7px 16px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;border-radius:3px;}
+.legend{padding:8px 28px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--darker);border-bottom:1px solid var(--border);}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.score-badge-mini{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;color:#fff;}
+.table-wrap{overflow-x:auto;padding-bottom:40px;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--dark);position:sticky;top:62px;z-index:50;}
+th{padding:9px 8px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--text);}
+th.sorted{color:var(--green);}
+th.th-info{color:#5A7A5A;}
+th.th-price{color:#3B82F6;}
+th.th-rev{color:#22C55E;}
+th.th-depr{color:#F97316;}
+th.th-score{color:#A855F7;}
+tbody tr{border-bottom:1px solid #111A11;}
+tbody tr:hover{background:rgba(255,255,255,0.02);}
+td{padding:7px 8px;vertical-align:middle;font-size:12px;color:var(--text);white-space:nowrap;}
+td.rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:#2A3A2A;text-align:center;width:36px;}
+td.rank.top3{color:var(--green);}
+.editable{background:transparent;border:1px solid transparent;color:var(--text);font-size:12px;font-family:'Barlow',sans-serif;padding:3px 6px;border-radius:3px;width:100%;outline:none;transition:border-color 0.15s,background 0.15s;}
+.editable:hover{border-color:var(--border);background:var(--card2);}
+.editable:focus{border-color:var(--green);background:var(--card2);}
+.editable.num{text-align:right;width:80px;}
+select.editable{cursor:pointer;padding-right:20px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;}
+.price-cell{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;}
+.price-cell.resale{color:#22C55E;}
+.price-cell.depr-ann{color:#F59E0B;font-size:13px;}
+.score-cell{display:flex;align-items:center;gap:6px;min-width:100px;}
+.score-bar-wrap{flex:1;height:4px;background:#1A2A1A;border-radius:3px;overflow:hidden;}
+.score-bar{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;min-width:30px;text-align:right;}
+.verdict{font-size:11px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+.btn-del{background:none;border:1px solid #1E2E1E;color:#3A4A3A;width:22px;height:22px;border-radius:3px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.btn-del:hover{border-color:var(--green);color:var(--green);}
+.th-section-start{border-left:2px solid #1E2E1E;}
+td.td-section-start{border-left:1px solid #1A2A1A;}
+.deal-badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:2px;}
+.method-panel{margin:0 28px 40px;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.method-toggle{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border:none;background:none;width:100%;text-align:left;}
+.method-body{padding:20px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+.method-section h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+.method-section p,.method-section li{font-size:12px;color:#4A6A4A;line-height:1.7;}
+.method-section ul{padding-left:16px;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--darker);}
+::-webkit-scrollbar-thumb{background:#1E2E1E;border-radius:3px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>const __DATA__ = [{"src": "CarGurus.ca", "annee": 2021, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 97808, "prix": 27990, "coul": "Black", "carb": "Essence", "vendeur": "", "ville": "Hamilton", "prov": "ON", "deal": "Good Deal", "vin": "", "rv2": 20940, "rv3": 18531, "rv5": 15010, "d2": 7050, "d3": 9459, "d5": 12980, "dy2": 3525, "dy3": 3153, "dy5": 2596, "s2": 79.5, "s3": 79.5, "s5": 79.5, "id": 1}, {"src": "CarGurus.ca", "annee": 2019, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 50173, "prix": 47995, "coul": "", "carb": "Essence", "vendeur": "Vendeur privé", "ville": "Saguenay", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 37886, "rv3": 33908, "rv5": 28078, "d2": 10109, "d3": 14087, "d5": 19917, "dy2": 5054, "dy3": 4695, "dy5": 3983, "s2": 76.3, "s3": 75.7, "s5": 75.7, "id": 2}, {"src": "AutoTrader.ca", "annee": 2019, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 74061, "prix": 45800, "coul": "", "carb": "Essence", "vendeur": "JD Occasion", "ville": "Boischatel", "prov": "QC", "deal": "", "vin": "", "rv2": 35466, "rv3": 31742, "rv5": 26285, "d2": 10334, "d3": 14058, "d5": 19515, "dy2": 5167, "dy3": 4686, "dy5": 3903, "s2": 72.1, "s3": 72.0, "s5": 72.2, "id": 3}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 68700, "prix": 51388, "coul": "Black", "carb": "Essence", "vendeur": "Automania Inc", "ville": "Toronto", "prov": "ON", "deal": "High Priced", "vin": "", "rv2": 38894, "rv3": 34421, "rv5": 27880, "d2": 12494, "d3": 16967, "d5": 23508, "dy2": 6247, "dy3": 5655, "dy5": 4701, "s2": 71.2, "s3": 71.1, "s5": 71.6, "id": 4}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 69966, "prix": 51915, "coul": "Black", "carb": "Essence", "vendeur": "Beauport Nissan", "ville": "Quebec", "prov": "QC", "deal": "Great Deal", "vin": "ZASPAKEV8N7D50428", "rv2": 39293, "rv3": 34774, "rv5": 28166, "d2": 12622, "d3": 17141, "d5": 23749, "dy2": 6311, "dy3": 5713, "dy5": 4749, "s2": 70.8, "s3": 70.8, "s5": 71.2, "id": 5}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 22500, "prix": 66990, "coul": "Ocra GT Junior", "carb": "Essence", "vendeur": "GAIN Vancouver", "ville": "Vancouver", "prov": "BC", "deal": "Fair Deal", "vin": "", "rv2": 53056, "rv3": 47856, "rv5": 39195, "d2": 13934, "d3": 19134, "d5": 27795, "dy2": 6967, "dy3": 6378, "dy5": 5559, "s2": 70.3, "s3": 70.0, "s5": 69.5, "id": 6}, {"src": "CarGurus.ca", "annee": 2018, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 98292, "prix": 42888, "coul": "Vulcano Black", "carb": "Essence", "vendeur": "Mercedes-Benz Blainville", "ville": "Mirabel", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 32831, "rv3": 29384, "rv5": 24332, "d2": 10057, "d3": 13504, "d5": 18556, "dy2": 5028, "dy3": 4501, "dy5": 3711, "s2": 70.0, "s3": 70.1, "s5": 70.4, "id": 7}, {"src": "AutoTrader.ca", "annee": 2021, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 46382, "prix": 59888, "coul": "Vulcano Black", "carb": "Essence", "vendeur": "Alfa Romeo of Oakville", "ville": "Oakville", "prov": "ON", "deal": "", "vin": "", "rv2": 46216, "rv3": 41364, "rv5": 33503, "d2": 13672, "d3": 18524, "d5": 26385, "dy2": 6836, "dy3": 6174, "dy5": 5277, "s2": 70.0, "s3": 70.1, "s5": 70.0, "id": 8}, {"src": "CarGurus.ca", "annee": 2019, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 79124, "prix": 48999, "coul": "Red", "carb": "Essence", "vendeur": "Good Fellow's Auto", "ville": "North York", "prov": "ON", "deal": "High Priced", "vin": "", "rv2": 37943, "rv3": 33959, "rv5": 28121, "d2": 11056, "d3": 15040, "d5": 20878, "dy2": 5528, "dy3": 5013, "dy5": 4175, "s2": 69.9, "s3": 69.8, "s5": 70.0, "id": 9}, {"src": "AutoTrader.ca", "annee": 2021, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 70000, "prix": 49800, "coul": "Vulcano Black", "carb": "Essence", "vendeur": "VENUS FINE CARS", "ville": "North York", "prov": "ON", "deal": "", "vin": "", "rv2": 37692, "rv3": 33357, "rv5": 27018, "d2": 12108, "d3": 16443, "d5": 22782, "dy2": 6054, "dy3": 5481, "dy5": 4556, "s2": 67.9, "s3": 67.8, "s5": 68.2, "id": 10}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 64724, "prix": 56986, "coul": "Black", "carb": "Essence", "vendeur": "Alfa Romeo Edmonton", "ville": "Edmonton", "prov": "AB", "deal": "Fair Deal", "vin": "", "rv2": 43624, "rv3": 38607, "rv5": 31271, "d2": 13362, "d3": 18379, "d5": 25715, "dy2": 6681, "dy3": 6126, "dy5": 5143, "s2": 67.8, "s3": 67.5, "s5": 67.9, "id": 11}, {"src": "CarGurus.ca", "annee": 2019, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 70253, "prix": 51995, "coul": "Vulcano Black", "carb": "Essence", "vendeur": "United Auto Alfa Romeo", "ville": "Boisbriand", "prov": "QC", "deal": "Overpriced", "vin": "", "rv2": 40263, "rv3": 36035, "rv5": 29840, "d2": 11732, "d3": 15960, "d5": 22155, "dy2": 5866, "dy3": 5320, "dy5": 4431, "s2": 67.8, "s3": 67.7, "s5": 68.0, "id": 12}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 39390, "prix": 64995, "coul": "Black", "carb": "Essence", "vendeur": "Maserati of Toronto", "ville": "Toronto", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 51018, "rv3": 45661, "rv5": 36984, "d2": 13977, "d3": 19334, "d5": 28011, "dy2": 6988, "dy3": 6444, "dy5": 5602, "s2": 67.7, "s3": 67.2, "s5": 66.8, "id": 13}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 51444, "prix": 58400, "coul": "Vulcano Black", "carb": "Essence", "vendeur": "Mercedes-Benz West Island", "ville": "Dollard-des-Ormeaux", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 45068, "rv3": 39885, "rv5": 32306, "d2": 13332, "d3": 18515, "d5": 26094, "dy2": 6666, "dy3": 6171, "dy5": 5218, "s2": 67.4, "s3": 66.8, "s5": 67.1, "id": 14}, {"src": "AutoTrader.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 47000, "prix": 63800, "coul": "Ocra GT Junior", "carb": "Essence", "vendeur": "VENUS FINE CARS", "ville": "North York", "prov": "ON", "deal": "", "vin": "", "rv2": 49235, "rv3": 44065, "rv5": 35692, "d2": 14565, "d3": 19735, "d5": 28108, "dy2": 7282, "dy3": 6578, "dy5": 5621, "s2": 67.1, "s3": 67.1, "s5": 67.2, "id": 15}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 46127, "prix": 64495, "coul": "Vulcano Black", "carb": "Essence", "vendeur": "United Auto Alfa Romeo", "ville": "Boisbriand", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 49772, "rv3": 44546, "rv5": 36081, "d2": 14723, "d3": 19949, "d5": 28414, "dy2": 7361, "dy3": 6649, "dy5": 5682, "s2": 66.6, "s3": 66.6, "s5": 66.7, "id": 16}, {"src": "AutoTrader.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 50125, "prix": 61995, "coul": "Alfa Rosso", "carb": "Essence", "vendeur": "Maserati of Toronto", "ville": "Toronto", "prov": "ON", "deal": "", "vin": "", "rv2": 47842, "rv3": 42340, "rv5": 34295, "d2": 14153, "d3": 19655, "d5": 27700, "dy2": 7076, "dy3": 6551, "dy5": 5540, "s2": 64.7, "s3": 64.1, "s5": 64.4, "id": 17}, {"src": "CarGurus.ca", "annee": 2023, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 39376, "prix": 69888, "coul": "Black", "carb": "Essence", "vendeur": "Shine Auto Toronto", "ville": "Etobicoke", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 54859, "rv3": 49099, "rv5": 39769, "d2": 15029, "d3": 20789, "d5": 30119, "dy2": 7514, "dy3": 6929, "dy5": 6023, "s2": 64.1, "s3": 63.6, "s5": 63.2, "id": 18}, {"src": "AutoTrader.ca", "annee": 2018, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 71000, "prix": 58966, "coul": "", "carb": "Essence", "vendeur": "Maserati of Ontario", "ville": "Woodbridge", "prov": "ON", "deal": "", "vin": "", "rv2": 45661, "rv3": 40867, "rv5": 33841, "d2": 13305, "d3": 18099, "d5": 25125, "dy2": 6652, "dy3": 6033, "dy5": 5025, "s2": 62.7, "s3": 62.7, "s5": 63.2, "id": 19}, {"src": "CarGurus.ca", "annee": 2023, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 20789, "prix": 79987, "coul": "Gray", "carb": "Essence", "vendeur": "Des Sources DCJF", "ville": "Dollard-des-Ormeaux", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 63349, "rv3": 57141, "rv5": 46800, "d2": 16638, "d3": 22846, "d5": 33187, "dy2": 8319, "dy3": 7615, "dy5": 6637, "s2": 60.6, "s3": 60.3, "s5": 59.9, "id": 20}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 74100, "prix": 62495, "coul": "Rosso Etna", "carb": "Essence", "vendeur": "Alfa Romeo Ottawa", "ville": "Ottawa", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 47300, "rv3": 41861, "rv5": 33906, "d2": 15195, "d3": 20634, "d5": 28589, "dy2": 7597, "dy3": 6878, "dy5": 5717, "s2": 58.2, "s3": 58.2, "s5": 59.0, "id": 21}, {"src": "AutoTrader.ca", "annee": 2022, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 92195, "prix": 62800, "coul": "", "carb": "Essence", "vendeur": "JD Occasion", "ville": "Boischatel", "prov": "QC", "deal": "", "vin": "", "rv2": 46982, "rv3": 41579, "rv5": 33678, "d2": 15818, "d3": 21221, "d5": 29122, "dy2": 7909, "dy3": 7073, "dy5": 5824, "s2": 53.5, "s3": 53.8, "s5": 54.9, "id": 22}, {"src": "AutoTrader.ca", "annee": 2024, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 11725, "prix": 104900, "coul": "Verde Fangio", "carb": "Essence", "vendeur": "Exclusivo Car Club", "ville": "Dieppe", "prov": "NB", "deal": "", "vin": "", "rv2": 83080, "rv3": 74938, "rv5": 62534, "d2": 21820, "d3": 29962, "d5": 42366, "dy2": 10910, "dy3": 9987, "dy5": 8473, "s2": 41.7, "s3": 41.3, "s5": 42.3, "id": 23}, {"src": "AutoTrader.ca", "annee": 2024, "trim": "Quadrifoglio AWD", "cond": "Usagé", "km": 42, "prix": 122589, "coul": "", "carb": "Essence", "vendeur": "Alfa Romeo Edmonton", "ville": "Edmonton", "prov": "AB", "deal": "", "vin": "", "rv2": 98193, "rv3": 89356, "rv5": 74566, "d2": 24396, "d3": 33233, "d5": 48023, "dy2": 12198, "dy3": 11077, "dy5": 9604, "s2": 23.8, "s3": 23.8, "s5": 23.8, "id": 24}];</script>
+<script type="text/babel">
+const {useState,useMemo,useCallback} = React;
+
+const CURRENT_YEAR = 2026;
+const BASE_DEPR = {1:0.12,2:0.10,3:0.09,4:0.08,5:0.07};
+
+function annualRate(yr,km,annee){
+  let r=BASE_DEPR[yr]||0.065;
+  if(km>80000)r+=0.025; else if(km>60000)r+=0.015; else if(km>40000)r+=0.008; else if(km<10000)r-=0.010;
+  if((CURRENT_YEAR-annee)>=6)r-=0.010;
+  return Math.max(r,0.04);
+}
+function forecastVal(prix,km,annee,years){
+  let val=prix, kp=km||5000;
+  for(let y=1;y<=years;y++){val*=(1-annualRate(y,kp,annee));kp+=15000;}
+  return Math.max(Math.round(val),Math.round(prix*0.18));
+}
+function computeScores(rows){
+  if(!rows.length)return[];
+  const prices=rows.map(r=>r.prix);
+  const mn=Math.min(...prices),mx=Math.max(...prices);
+  const wd=rows.map(r=>{
+    const rv2=forecastVal(r.prix,r.km,r.annee,2);
+    const rv3=forecastVal(r.prix,r.km,r.annee,3);
+    const rv5=forecastVal(r.prix,r.km,r.annee,5);
+    return{...r,rv2,rv3,rv5,dy2:(r.prix-rv2)/2,dy3:(r.prix-rv3)/3,dy5:(r.prix-rv5)/5};
+  });
+  const all2=wd.map(r=>r.dy2),all3=wd.map(r=>r.dy3),all5=wd.map(r=>r.dy5);
+  const mn2=Math.min(...all2),mx2=Math.max(...all2);
+  const mn3=Math.min(...all3),mx3=Math.max(...all3);
+  const mn5=Math.min(...all5),mx5=Math.max(...all5);
+  return wd.map(r=>{
+    const ps=mx===mn?50:Math.pow((mx-r.prix)/(mx-mn),0.75)*100;
+    const km=r.km;
+    const ks=km===0?85:km<10000?95:km<20000?88:km<35000?78:km<50000?65:km<70000?50:km<90000?32:18;
+    const ds2=mx2===mn2?50:Math.pow((mx2-r.dy2)/(mx2-mn2),0.75)*100;
+    const ds3=mx3===mn3?50:Math.pow((mx3-r.dy3)/(mx3-mn3),0.75)*100;
+    const ds5=mx5===mn5?50:Math.pow((mx5-r.dy5)/(mx5-mn5),0.75)*100;
+    return{...r,
+      s2:Math.round((0.40*ps+0.25*ks+0.35*ds2)*10)/10,
+      s3:Math.round((0.40*ps+0.25*ks+0.35*ds3)*10)/10,
+      s5:Math.round((0.40*ps+0.25*ks+0.35*ds5)*10)/10};
+  });
+}
+function verdict(s){
+  if(s>=80)return["🏆 Excellent","#16A34A"];
+  if(s>=65)return["✅ Bon deal","#22C55E"];
+  if(s>=50)return["👍 Correct","#CA8A04"];
+  if(s>=35)return["⚠️ Passable","#EA580C"];
+  return["❌ À éviter","#DC2626"];
+}
+function scoreColor(s){if(s>=80)return"#16A34A";if(s>=65)return"#22C55E";if(s>=50)return"#EAB308";if(s>=35)return"#F97316";return"#EF4444";}
+function fmt(n){return n?"$"+n.toLocaleString("fr-CA"):"—";}
+function dealColor(d){
+  if(!d)return["#333","#666"];
+  if(d.includes("Great"))return["#052E16","#4ADE80"];
+  if(d.includes("Good"))return["#063B1E","#22C55E"];
+  if(d.includes("Fair"))return["#1C1400","#EAB308"];
+  if(d.includes("High")||d.includes("Over"))return["#3B0A0A","#F87171"];
+  return["#1A1A1A","#666"];
+}
+
+function EditCell({value,type="text",options,onChange,className=""}){
+  if(options)return<select className={`editable ${className}`} value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>;
+  return<input className={`editable ${type==="number"?"num":""} ${className}`} type={type} value={value} onChange={e=>onChange(type==="number"?Number(e.target.value)||0:e.target.value)} min={type==="number"?0:undefined}/>;
+}
+function ScoreCell({score}){
+  const color=scoreColor(score);
+  return<div className="score-cell"><div className="score-bar-wrap"><div className="score-bar" style={{width:`${score}%`,background:color}}/></div><span className="score-num" style={{color}}>{score}</span></div>;
+}
+
+function App(){
+  const [rows,setRows]=useState(__DATA__);
+  const [sortBy,setSortBy]=useState("s2");
+  const [sortDir,setSortDir]=useState("desc");
+  const [filterSrc,setFilterSrc]=useState("Tous");
+  const [filterProv,setFilterProv]=useState("Tous");
+  const [scoreMode,setScoreMode]=useState("s2");
+  const [showMethod,setShowMethod]=useState(false);
+  const [nextId,setNextId]=useState(100);
+
+  const scored=useMemo(()=>computeScores(rows),[rows]);
+  const filtered=useMemo(()=>{
+    let r=scored;
+    if(filterSrc!=="Tous")r=r.filter(x=>x.src===filterSrc);
+    if(filterProv!=="Tous")r=r.filter(x=>x.prov===filterProv);
+    return r;
+  },[scored,filterSrc,filterProv]);
+  const sorted=useMemo(()=>[...filtered].sort((a,b)=>{
+    let va=a[sortBy],vb=b[sortBy];
+    if(typeof va==="string"){va=va.toLowerCase();vb=vb.toLowerCase();}
+    return va<vb?(sortDir==="asc"?-1:1):va>vb?(sortDir==="asc"?1:-1):0;
+  }),[filtered,sortBy,sortDir]);
+
+  const handleSort=col=>{if(sortBy===col)setSortDir(d=>d==="asc"?"desc":"asc");else{setSortBy(col);setSortDir("desc");}};
+  const updateRow=useCallback((id,field,val)=>setRows(prev=>prev.map(r=>r.id===id?{...r,[field]:val}:r)),[]);
+  const deleteRow=id=>setRows(prev=>prev.filter(r=>r.id!==id));
+  const addRow=()=>{setRows(prev=>[...prev,{id:nextId,src:"CarGurus.ca",annee:2022,trim:"Quadrifoglio AWD",cond:"Usagé",km:50000,prix:55000,coul:"",carb:"Essence",vendeur:"",ville:"",prov:"QC",deal:""}]);setNextId(n=>n+1);};
+
+  const allPrix=scored.map(r=>r.prix);
+  const avgPrix=Math.round(allPrix.reduce((a,b)=>a+b,0)/allPrix.length);
+  const provs=["Tous",...new Set(rows.map(r=>r.prov).filter(Boolean))].sort();
+
+  const Th=({col,children,cls=""})=>{
+    const active=sortBy===col;
+    const arrow=active?(sortDir==="asc"?"↑":"↓"):"↕";
+    return<th className={`${cls} ${active?"sorted":""}`} onClick={()=>handleSort(col)}>{children} <span style={{opacity:active?1:0.4,color:active?"#27AE60":"inherit"}}>{arrow}</span></th>;
+  };
+
+  return<div>
+    <div className="header">
+      <div style={{display:"flex",alignItems:"center",gap:16}}>
+        <div className="logo-badge">QV</div>
+        <div><div className="header-title">ALFA ROMEO STELVIO QUADRIFOGLIO — SCORING DYNAMIQUE</div>
+        <div className="header-sub">505 HP Ferrari V6 · Modifie n'importe quelle donnée → scores recalculés en temps réel</div></div>
+      </div>
+      <div className="header-stats">
+        <div className="stat-pill"><div className="num">{rows.length}</div><div className="lbl">Annonces</div></div>
+        <div className="stat-pill"><div className="num">{fmt(Math.min(...allPrix))}</div><div className="lbl">Prix min</div></div>
+        <div className="stat-pill"><div className="num">{fmt(avgPrix)}</div><div className="lbl">Prix moy.</div></div>
+        <div className="stat-pill"><div className="num">{fmt(Math.max(...allPrix))}</div><div className="lbl">Prix max</div></div>
+      </div>
+    </div>
+
+    <div className="controls">
+      <div className="ctrl-group"><label>Source</label>
+        <select value={filterSrc} onChange={e=>setFilterSrc(e.target.value)}>{["Tous","CarGurus.ca","AutoTrader.ca"].map(o=><option key={o}>{o}</option>)}</select>
+      </div>
+      <div className="ctrl-group"><label>Province</label>
+        <select value={filterProv} onChange={e=>setFilterProv(e.target.value)}>{provs.map(o=><option key={o}>{o}</option>)}</select>
+      </div>
+      <div className="sep"/>
+      <div className="ctrl-group"><label>Trier par score</label>
+        <select value={scoreMode} onChange={e=>{setScoreMode(e.target.value);setSortBy(e.target.value);setSortDir("desc");}}>
+          <option value="s2">1-2 ans</option><option value="s3">2-3 ans</option><option value="s5">5+ ans</option>
+        </select>
+      </div>
+      <div className="sep"/>
+      <span style={{color:"var(--muted)",fontSize:11}}>Résultats: <strong style={{color:"var(--text)"}}>{sorted.length}</strong></span>
+      <button className="btn-add" onClick={addRow}>+ Ajouter</button>
+    </div>
+
+    <div className="legend">
+      <span style={{fontSize:11,color:"#333",textTransform:"uppercase",letterSpacing:1}}>Score:</span>
+      {[["🏆 Excellent","#16A34A","80-100"],["✅ Bon deal","#22C55E","65-79"],["👍 Correct","#EAB308","50-64"],["⚠️ Passable","#F97316","35-49"],["❌ À éviter","#EF4444","0-34"]].map(([l,c,r])=>(
+        <div key={l} className="legend-item"><span className="score-badge-mini" style={{background:c}}>{l}</span><span>{r}</span></div>
+      ))}
+      <div className="sep"/>
+      <span style={{fontSize:11,color:"#3A5A3A"}}>Algo: 40% Prix marché + 25% Kilométrage + 35% Dépréciation annuelle | V6 biturbo 2.9L Ferrari 505hp</span>
+    </div>
+
+    <div className="table-wrap">
+      <table>
+        <thead><tr>
+          <th className="th-id">Rang</th>
+          <Th col="src" cls="th-info">Source</Th>
+          <Th col="annee" cls="th-info">Année</Th>
+          <Th col="km" cls="th-info">KM</Th>
+          <Th col="coul" cls="th-info">Couleur</Th>
+          <Th col="vendeur" cls="th-info">Vendeur</Th>
+          <Th col="ville" cls="th-info">Ville</Th>
+          <Th col="prov" cls="th-info">Prov.</Th>
+          <Th col="deal" cls="th-info">Deal CG</Th>
+          <Th col="prix" cls="th-price th-section-start">Prix ($)</Th>
+          <Th col="rv2" cls="th-rev th-section-start">🔮 Revente 2ans</Th>
+          <Th col="rv3" cls="th-rev">🔮 Revente 3ans</Th>
+          <Th col="rv5" cls="th-rev">🔮 Revente 5ans</Th>
+          <Th col="dy2" cls="th-depr th-section-start">💸 Dépr./an 2ans</Th>
+          <Th col="dy3" cls="th-depr">💸 Dépr./an 3ans</Th>
+          <Th col="dy5" cls="th-depr">💸 Dépr./an 5ans</Th>
+          <Th col="s2" cls="th-score th-section-start">⭐ 1-2ans</Th>
+          <Th col="s3" cls="th-score">⭐ 2-3ans</Th>
+          <Th col="s5" cls="th-score">⭐ 5ans</Th>
+          <th className="th-score">Verdict</th>
+          <th style={{width:32}}></th>
+        </tr></thead>
+        <tbody>
+          {sorted.map((r,idx)=>{
+            const [vLabel,vColor]=verdict(r[scoreMode]);
+            const rank=idx+1;
+            const rf=r.src==="CarGurus.ca"?(idx%2===0?"#0D170D":"#0A130A"):(idx%2===0?"#0A1020":"#080D18");
+            const [dbg,dfc]=dealColor(r.deal);
+            return<tr key={r.id} style={{background:rf}}>
+              <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
+              <td><EditCell value={r.src} options={["CarGurus.ca","AutoTrader.ca"]} onChange={v=>updateRow(r.id,"src",v)}/></td>
+              <td><EditCell value={r.annee} type="number" onChange={v=>updateRow(r.id,"annee",v)}/></td>
+              <td><EditCell value={r.km} type="number" onChange={v=>updateRow(r.id,"km",v)}/></td>
+              <td><EditCell value={r.coul} onChange={v=>updateRow(r.id,"coul",v)}/></td>
+              <td style={{minWidth:140}}><EditCell value={r.vendeur} onChange={v=>updateRow(r.id,"vendeur",v)}/></td>
+              <td><EditCell value={r.ville} onChange={v=>updateRow(r.id,"ville",v)}/></td>
+              <td><EditCell value={r.prov} onChange={v=>updateRow(r.id,"prov",v)}/></td>
+              <td>{r.deal&&<span className="deal-badge" style={{background:dbg,color:dfc,border:`1px solid ${dfc}44`}}>{r.deal}</span>}</td>
+              <td className="td-section-start">
+                <EditCell value={r.prix} type="number" onChange={v=>updateRow(r.id,"prix",v)} className="num"/>
+              </td>
+              <td className="td-section-start price-cell resale">{fmt(r.rv2)}</td>
+              <td className="price-cell resale">{fmt(r.rv3)}</td>
+              <td className="price-cell resale">{fmt(r.rv5)}</td>
+              <td className="td-section-start price-cell depr-ann">{fmt(Math.round(r.dy2))}/an</td>
+              <td className="price-cell depr-ann">{fmt(Math.round(r.dy3))}/an</td>
+              <td className="price-cell depr-ann">{fmt(Math.round(r.dy5))}/an</td>
+              <td className="td-section-start"><ScoreCell score={r.s2}/></td>
+              <td><ScoreCell score={r.s3}/></td>
+              <td><ScoreCell score={r.s5}/></td>
+              <td><span className="verdict" style={{background:vColor+"22",color:vColor,border:`1px solid ${vColor}44`}}>{vLabel}</span></td>
+              <td><button className="btn-del" onClick={()=>deleteRow(r.id)} title="Supprimer">✕</button></td>
+            </tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <div className="method-panel">
+      <button className="method-toggle" onClick={()=>setShowMethod(s=>!s)}>
+        <span>📋 Méthodologie — Stelvio Quadrifoglio (V6 Ferrari 505hp)</span>
+        <span>{showMethod?"▲ Fermer":"▼ Voir le détail"}</span>
+      </button>
+      {showMethod&&<div className="method-body">
+        <div className="method-section"><h4>Score (0-100)</h4><ul>
+          <li><strong style={{color:"#60A5FA"}}>40%</strong> Prix dans l'échantillon (courbe convexe)</li>
+          <li><strong style={{color:"#4ADE80"}}>25%</strong> Kilométrage: &lt;10k=95 / 20k=88 / 35k=78 / 50k=65 / 70k=50 / 90k+=18</li>
+          <li><strong style={{color:"#C084FC"}}>35%</strong> Dépréciation annuelle normalisée sur l'échantillon</li>
+        </ul></div>
+        <div className="method-section"><h4>Dépréciation QV spécifique</h4><ul>
+          <li>Taux base: an1=12%, an2=10%, an3=9%, an4=8%, an5=7%</li>
+          <li>Plus bas que moyenne (V6 Ferrari rare → retient sa valeur)</li>
+          <li>KM &gt;80k: +2.5%/an | &gt;60k: +1.5%/an | &lt;10k: -1.0%/an</li>
+          <li>Véhicule &gt;6 ans: -1.0%/an (courbe aplatie)</li>
+          <li>Plancher: 18% du prix d'achat</li>
+        </ul></div>
+        <div className="method-section"><h4>Note importante</h4><ul>
+          <li>Le 2024 à $122k est le <strong>dernier QV produit au Canada</strong> — valeur collector potentielle non modélisée</li>
+          <li>Scores relatifs à l'échantillon actuel</li>
+          <li>Clique sur n'importe quelle cellule pour modifier</li>
+        </ul></div>
+      </div>}
+    </div>
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

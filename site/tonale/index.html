@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfa Romeo Tonale — Analyse & Scoring</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C00000;
+    --red-light: #E8353520;
+    --red-mid: #C0000015;
+    --dark: #0F0F0F;
+    --darker: #080808;
+    --card: #161616;
+    --card2: #1C1C1C;
+    --border: #2A2A2A;
+    --text: #E8E8E8;
+    --muted: #888;
+    --green: #22C55E;
+    --green-d: #16A34A;
+    --yellow: #EAB308;
+    --orange: #F97316;
+    --blue: #3B82F6;
+    --purple: #A855F7;
+    --score-ex: #16A34A;
+    --score-good: #22C55E;
+    --score-ok: #EAB308;
+    --score-meh: #F97316;
+    --score-bad: #EF4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--darker);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
+    border-bottom: 2px solid var(--red);
+    padding: 18px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-badge {
+    background: var(--red);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    padding: 6px 14px;
+    letter-spacing: 2px;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .header-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .header-stats { display: flex; gap: 20px; }
+  .stat-pill {
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 4px;
+  }
+  .stat-pill .num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--red);
+  }
+  .stat-pill .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* CONTROLS */
+  .controls {
+    padding: 12px 28px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .controls label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .controls select, .controls input {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: 'Barlow', sans-serif;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+  .controls select:focus, .controls input:focus { border-color: var(--red); }
+  .ctrl-group { display: flex; align-items: center; gap: 8px; }
+  .sep { width: 1px; height: 28px; background: var(--border); }
+  .btn-add {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 7px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.15s;
+  }
+  .btn-add:hover { background: #A00000; }
+
+  /* LEGEND */
+  .legend {
+    padding: 8px 28px;
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    background: var(--darker);
+    border-bottom: 1px solid var(--border);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .score-badge-mini {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    color: #fff;
+  }
+
+  /* TABLE WRAPPER */
+  .table-wrap { overflow-x: auto; padding: 0 0 40px 0; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--dark); position: sticky; top: 64px; z-index: 50; }
+  th {
+    padding: 10px 8px;
+    text-align: left;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+  }
+  th:hover { color: var(--text); }
+  th.sorted { color: var(--red); }
+  th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+  th .sort-arrow.active { opacity: 1; color: var(--red); }
+
+  /* Section header colors */
+  th.th-id    { color: #555; }
+  th.th-info  { color: #6B7280; }
+  th.th-price { color: #3B82F6; }
+  th.th-rev   { color: #22C55E; }
+  th.th-depr  { color: #F97316; }
+  th.th-score { color: #A855F7; }
+
+  tbody tr {
+    border-bottom: 1px solid #1E1E1E;
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+  tbody tr.editing { background: rgba(192,0,0,0.06) !important; outline: 1px solid var(--red); }
+
+  td {
+    padding: 7px 8px;
+    vertical-align: middle;
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  td.rank {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+    width: 40px;
+  }
+  td.rank.top3 { color: var(--red); }
+
+  /* Editable fields */
+  .editable {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text);
+    font-size: 12px;
+    font-family: 'Barlow', sans-serif;
+    padding: 3px 6px;
+    border-radius: 3px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .editable:hover { border-color: var(--border); background: var(--card2); }
+  .editable:focus { border-color: var(--red); background: var(--card2); }
+  .editable.num { text-align: right; width: 80px; }
+
+  select.editable {
+    cursor: pointer;
+    padding-right: 20px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+  }
+
+  /* Source badge */
+  .src-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+  .src-cg { background: #052E16; color: #4ADE80; border: 1px solid #166534; }
+  .src-at { background: #1E3A5F; color: #60A5FA; border: 1px solid #1D4ED8; }
+
+  /* Condition badge */
+  .cond-neuf  { color: #60A5FA; font-weight: 600; }
+  .cond-usage { color: var(--muted); }
+
+  /* Price cells */
+  .price-cell { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; }
+  .price-cell.main { color: #fff; }
+  .price-cell.resale { color: var(--green); }
+  .price-cell.depr { color: var(--orange); }
+  .price-cell.depr-ann { color: #F59E0B; font-size: 13px; }
+
+  /* Score cells */
+  .score-cell {
+    display: flex; align-items: center; gap: 6px;
+    min-width: 110px;
+  }
+  .score-bar-wrap { flex: 1; height: 5px; background: #2A2A2A; border-radius: 3px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .score-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* Verdict */
+  .verdict {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  /* Delete btn */
+  .btn-del {
+    background: none;
+    border: 1px solid #333;
+    color: #555;
+    width: 22px; height: 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .btn-del:hover { border-color: var(--red); color: var(--red); background: var(--red-mid); }
+
+  /* Section dividers in header */
+  .th-section-start { border-left: 2px solid #2A2A2A; }
+  td.td-section-start { border-left: 1px solid #222; }
+
+  /* Methodology panel */
+  .method-panel {
+    margin: 0 28px 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .method-toggle {
+    padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: none; background: none; width: 100%; text-align: left;
+    transition: color 0.15s;
+  }
+  .method-toggle:hover { color: var(--text); }
+  .method-body { padding: 20px; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .method-section h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+  .method-section p, .method-section li { font-size: 12px; color: #999; line-height: 1.7; }
+  .method-section ul { padding-left: 16px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--darker); }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+  .section-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #444;
+    padding: 0 8px 2px;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useCallback } = React;
+
+// ── INITIAL DATA ──────────────────────────────────────────────────────────────
+const INITIAL = [
+  {id:1, src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:44292,prix:33789,coul:"Black",         carb:"Hybride PHEV",vendeur:"",               ville:"Quebec",          prov:"QC"},
+  {id:2, src:"CarGurus",annee:2024,trim:"Veloce eAWD",       cond:"Usagé",km:42000,prix:32995,coul:"White",         carb:"Hybride eAWD",vendeur:"",               ville:"St-Jean-Richelieu",prov:"QC"},
+  {id:3, src:"CarGurus",annee:2024,trim:"PHEV Sprint AWD",   cond:"Usagé",km:33615,prix:33880,coul:"Red",           carb:"Hybride PHEV",vendeur:"Scotti Alfa Romeo",ville:"Montréal",        prov:"QC"},
+  {id:4, src:"CarGurus",annee:2024,trim:"Veloce eAWD",       cond:"Usagé",km:56800,prix:31850,coul:"White",         carb:"Hybride eAWD",vendeur:"",               ville:"Québec",          prov:"QC"},
+  {id:5, src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:5006, prix:40995,coul:"Red",           carb:"Hybride PHEV",vendeur:"",               ville:"Niagara Falls",   prov:"ON"},
+  {id:6, src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:4311, prix:40995,coul:"Alfa White",    carb:"Hybride PHEV",vendeur:"",               ville:"Niagara Falls",   prov:"ON"},
+  {id:7, src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:21716,prix:43528,coul:"Milano White",  carb:"Hybride PHEV",vendeur:"",               ville:"Winnipeg",        prov:"MB"},
+  {id:8, src:"CarGurus",annee:2023,trim:"Veloce AWD",        cond:"Usagé",km:14500,prix:37995,coul:"Misano Blue",   carb:"Hybride eAWD",vendeur:"United Auto Alfa Romeo",ville:"Boisbriand",prov:"QC"},
+  {id:9, src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:39583,prix:32900,coul:"Red",           carb:"Hybride PHEV",vendeur:"",               ville:"Sainte-Marie",    prov:"QC"},
+  {id:10,src:"CarGurus",annee:2025,trim:"Tonale eAWD",       cond:"Usagé",km:2895, prix:58280,coul:"Blue",          carb:"Essence",     vendeur:"",               ville:"Toronto",         prov:"ON"},
+  {id:11,src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:29330,prix:35980,coul:"Blue",          carb:"Hybride PHEV",vendeur:"",               ville:"Montréal",        prov:"QC"},
+  {id:12,src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:0,    prix:68680,coul:"Black",         carb:"Hybride PHEV",vendeur:"",               ville:"Dollard-des-O.",  prov:"QC"},
+  {id:13,src:"CarGurus",annee:2024,trim:"Sprint eAWD",       cond:"Usagé",km:2400, prix:48995,coul:"White",         carb:"Hybride 1.3L",vendeur:"",               ville:"Dollard-des-O.",  prov:"QC"},
+  {id:14,src:"CarGurus",annee:2024,trim:"PHEV Sprint AWD",   cond:"Usagé",km:0,    prix:42528,coul:"Alfa Black",    carb:"Hybride PHEV",vendeur:"",               ville:"Winnipeg",        prov:"MB"},
+  {id:15,src:"CarGurus",annee:2025,trim:"Sprint AWD",        cond:"Usagé",km:0,    prix:60883,coul:"Milano White",  carb:"Essence",     vendeur:"",               ville:"Winnipeg",        prov:"MB"},
+  {id:16,src:"CarGurus",annee:2025,trim:"PHEV Sprint AWD",   cond:"Usagé",km:7700, prix:56995,coul:"Blue",          carb:"Hybride PHEV",vendeur:"",               ville:"Montréal",        prov:"QC"},
+  {id:17,src:"CarGurus",annee:2024,trim:"Sprint AWD",        cond:"Usagé",km:1700, prix:35538,coul:"Alfa Rosso",    carb:"Hybride eAWD",vendeur:"",               ville:"Winnipeg",        prov:"MB"},
+  {id:18,src:"CarGurus",annee:2025,trim:"PHEV Sprint AWD",   cond:"Usagé",km:21663,prix:43898,coul:"Alfa Rosso",    carb:"Hybride PHEV",vendeur:"",               ville:"Laval",           prov:"QC"},
+  {id:19,src:"CarGurus",annee:2025,trim:"Tributo Italiano eAWD",cond:"Usagé",km:3900,prix:62425,coul:"Métallique", carb:"Hybride 1.3L",vendeur:"",               ville:"Montréal",        prov:"QC"},
+  {id:20,src:"CarGurus",annee:2024,trim:"Veloce eAWD",       cond:"Usagé",km:19699,prix:34888,coul:"White",        carb:"Hybride eAWD",vendeur:"Mercedes-Benz Blainville",ville:"Mirabel",prov:"QC"},
+  {id:21,src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:61262,prix:31995,coul:"White",        carb:"Hybride PHEV",vendeur:"Blainville Chrysler",ville:"Blainville",   prov:"QC"},
+  {id:22,src:"CarGurus",annee:2025,trim:"Tributo Italiano eAWD",cond:"Usagé",km:25964,prix:49995,coul:"Red",       carb:"Hybride 1.3L",vendeur:"",               ville:"Toronto",         prov:"ON"},
+  {id:23,src:"AutoTrader",annee:2024,trim:"Sprint roues 19 po",cond:"Neuf", km:0,  prix:50812,coul:"",             carb:"Hybride PHEV",vendeur:"United Auto Alfa Romeo",ville:"Boisbriand",prov:"QC"},
+  {id:24,src:"AutoTrader",annee:2024,trim:"Veloce (neuf)",   cond:"Neuf", km:0,   prix:59802,coul:"",              carb:"Hybride PHEV",vendeur:"United Auto Alfa Romeo",ville:"Boisbriand",prov:"QC"},
+  {id:25,src:"AutoTrader",annee:2024,trim:"Veloce (neuf 2)", cond:"Neuf", km:0,   prix:56808,coul:"",              carb:"Hybride eAWD",vendeur:"United Auto Alfa Romeo",ville:"Boisbriand",prov:"QC"},
+  {id:26,src:"AutoTrader",annee:2024,trim:"Sprint EAWD 8 Pneus",cond:"Usagé",km:30951,prix:38995,coul:"Alfa Black",carb:"Hybride eAWD",vendeur:"Des Sources DCJF","ville":"Dollard-Des O.",prov:"QC"},
+  {id:27,src:"AutoTrader",annee:2025,trim:"Sprint",          cond:"Neuf", km:0,   prix:56012,coul:"",              carb:"Essence",     vendeur:"United Auto Alfa Romeo",ville:"Boisbriand",prov:"QC"},
+  {id:28,src:"AutoTrader",annee:2025,trim:"Sprint (2)",      cond:"Neuf", km:0,   prix:53712,coul:"",              carb:"Essence",     vendeur:"United Auto Alfa Romeo",ville:"Boisbriand",prov:"QC"},
+  {id:29,src:"AutoTrader",annee:2024,trim:"(Sans trim)",     cond:"Usagé",km:6540, prix:47995,coul:"",             carb:"Hybride",     vendeur:"Des Sources DCJF",     ville:"Dollard-Des O.",prov:"QC"},
+  {id:30,src:"AutoTrader",annee:2024,trim:"Veloce EAWD privé",cond:"Usagé",km:50000,prix:40000,coul:"Bleu Milano", carb:"Hybride PHEV",vendeur:"Vendeur privé",         ville:"Blainville",  prov:"QC"},
+  {id:31,src:"AutoTrader",annee:2025,trim:"Tonale",          cond:"Neuf", km:0,   prix:65915,coul:"",              carb:"Hybride",     vendeur:"Scotti Alfa Romeo",    ville:"Montréal",    prov:"QC"},
+  {id:32,src:"AutoTrader",annee:2025,trim:"Intensa (1)",     cond:"Neuf", km:0,   prix:56190,coul:"",              carb:"Essence",     vendeur:"Scotti Alfa Romeo",    ville:"Montréal",    prov:"QC"},
+  {id:33,src:"AutoTrader",annee:2025,trim:"Intensa (2)",     cond:"Neuf", km:0,   prix:56190,coul:"Alfa Black",    carb:"Essence",     vendeur:"Scotti Alfa Romeo",    ville:"Montréal",    prov:"QC"},
+  {id:34,src:"AutoTrader",annee:2025,trim:"Intensa (3)",     cond:"Neuf", km:0,   prix:57290,coul:"",              carb:"Essence",     vendeur:"Scotti Alfa Romeo",    ville:"Montréal",    prov:"QC"},
+  {id:35,src:"AutoTrader",annee:2025,trim:"Intensa (4)",     cond:"Neuf", km:0,   prix:55490,coul:"",              carb:"Essence",     vendeur:"Scotti Alfa Romeo",    ville:"Montréal",    prov:"QC"},
+  {id:36,src:"AutoTrader",annee:2025,trim:"Tonale TONALE",   cond:"Neuf", km:0,   prix:68038,coul:"",              carb:"Hybride",     vendeur:"",                     ville:"",            prov:"QC"},
+  {id:37,src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:44963,prix:39987,coul:"Blue Misano",  carb:"Hybride PHEV",vendeur:"Des Sources DCJF",     ville:"Dollard-des-O.",prov:"QC"},
+  {id:38,src:"CarGurus",annee:2024,trim:"PHEV Veloce AWD",   cond:"Usagé",km:22585,prix:39987,coul:"Black",       carb:"Hybride PHEV",vendeur:"Des Sources DCJF",     ville:"Dollard-des-O.",prov:"QC"},
+];
+
+// ── SCORING ENGINE ─────────────────────────────────────────────────────────
+const CURRENT_YEAR = 2026;
+const BASE_DEPR = {1:0.14, 2:0.12, 3:0.10, 4:0.09, 5:0.08};
+const NEW_SHOCK = 0.15;
+
+function annualRate(yearNum, carb, km, trim) {
+  let r = BASE_DEPR[yearNum] || 0.075;
+  const cl = carb.toLowerCase();
+  if (cl.includes("essence")) r -= 0.010;
+  else if (cl.includes("phev") || cl.includes("hybride")) r += 0.015;
+  if (km > 50000) r += 0.020;
+  else if (km > 30000) r += 0.010;
+  else if (km < 5000 && km > 0) r -= 0.010;
+  const tl = trim.toLowerCase();
+  if (["veloce","tributo","intensa"].some(t => tl.includes(t))) r -= 0.008;
+  return Math.max(r, 0.05);
+}
+
+function forecastValue(prix, cond, annee, km, carb, trim, yearsOwned) {
+  let val = prix;
+  if (cond === "Neuf") val *= (1 - NEW_SHOCK);
+  let kmP = km || 5000;
+  for (let y = 1; y <= yearsOwned; y++) {
+    const r = annualRate(y, carb, kmP, trim);
+    kmP += 15000;
+    val *= (1 - r);
+  }
+  return Math.max(Math.round(val), Math.round(prix * 0.15));
+}
+
+function computeScores(rows) {
+  if (!rows.length) return [];
+  const prices = rows.map(r => r.prix);
+  const minP = Math.min(...prices), maxP = Math.max(...prices);
+
+  // compute depreciation per year for each bucket first (for normalization)
+  const withDepr = rows.map(r => {
+    const rv2 = forecastValue(r.prix, r.cond, r.annee, r.km, r.carb, r.trim, 2);
+    const rv3 = forecastValue(r.prix, r.cond, r.annee, r.km, r.carb, r.trim, 3);
+    const rv5 = forecastValue(r.prix, r.cond, r.annee, r.km, r.carb, r.trim, 5);
+    return {
+      ...r, rv2, rv3, rv5,
+      dep2: r.prix - rv2, dep3: r.prix - rv3, dep5: r.prix - rv5,
+      dpy2: (r.prix - rv2)/2, dpy3: (r.prix - rv3)/3, dpy5: (r.prix - rv5)/5,
+    };
+  });
+
+  const all2 = withDepr.map(r => r.dpy2);
+  const all3 = withDepr.map(r => r.dpy3);
+  const all5 = withDepr.map(r => r.dpy5);
+  const mn2=Math.min(...all2),mx2=Math.max(...all2);
+  const mn3=Math.min(...all3),mx3=Math.max(...all3);
+  const mn5=Math.min(...all5),mx5=Math.max(...all5);
+
+  return withDepr.map(r => {
+    // price score
+    const ps = maxP===minP ? 50 : Math.pow((maxP-r.prix)/(maxP-minP), 0.75)*100;
+    // km score
+    const km = r.km;
+    const ks = km===0?85:km<5000?95:km<15000?88:km<25000?78:km<35000?68:km<45000?55:km<60000?40:25;
+    // depr score
+    const ds2 = mx2===mn2?50:Math.pow((mx2-r.dpy2)/(mx2-mn2),0.75)*100;
+    const ds3 = mx3===mn3?50:Math.pow((mx3-r.dpy3)/(mx3-mn3),0.75)*100;
+    const ds5 = mx5===mn5?50:Math.pow((mx5-r.dpy5)/(mx5-mn5),0.75)*100;
+    const s2 = Math.round((0.40*ps + 0.25*ks + 0.35*ds2)*10)/10;
+    const s3 = Math.round((0.40*ps + 0.25*ks + 0.35*ds3)*10)/10;
+    const s5 = Math.round((0.40*ps + 0.25*ks + 0.35*ds5)*10)/10;
+    return { ...r, score2:s2, score3:s3, score5:s5 };
+  });
+}
+
+function verdict(s) {
+  if (s>=80) return ["🏆 Excellent", "#16A34A"];
+  if (s>=65) return ["✅ Bon deal",  "#22C55E"];
+  if (s>=50) return ["👍 Correct",   "#CA8A04"];
+  if (s>=35) return ["⚠️ Passable",  "#EA580C"];
+  return ["❌ À éviter","#DC2626"];
+}
+function scoreColor(s) {
+  if (s>=80) return "#16A34A";
+  if (s>=65) return "#22C55E";
+  if (s>=50) return "#EAB308";
+  if (s>=35) return "#F97316";
+  return "#EF4444";
+}
+
+function fmt(n) { return n ? "$"+n.toLocaleString('fr-CA') : "—"; }
+function fmtKm(n) { return n>0 ? n.toLocaleString('fr-CA')+" km" : "N/D"; }
+
+// ── EDITABLE CELL ──────────────────────────────────────────────────────────
+function EditCell({value, type="text", options, onChange, className=""}) {
+  if (options) return (
+    <select className={`editable ${className}`} value={value} onChange={e=>onChange(e.target.value)}>
+      {options.map(o=><option key={o} value={o}>{o}</option>)}
+    </select>
+  );
+  return (
+    <input
+      className={`editable ${type==="number"?"num":""} ${className}`}
+      type={type} value={value}
+      onChange={e=>onChange(type==="number"?Number(e.target.value)||0:e.target.value)}
+      min={type==="number"?0:undefined}
+    />
+  );
+}
+
+// ── SCORE CELL ─────────────────────────────────────────────────────────────
+function ScoreCell({score}) {
+  const color = scoreColor(score);
+  return (
+    <div className="score-cell">
+      <div className="score-bar-wrap">
+        <div className="score-bar" style={{width:`${score}%`, background:color}} />
+      </div>
+      <span className="score-num" style={{color}}>{score}</span>
+    </div>
+  );
+}
+
+// ── MAIN APP ───────────────────────────────────────────────────────────────
+function App() {
+  const [rows, setRows] = useState(INITIAL);
+  const [sortBy, setSortBy] = useState("score2");
+  const [sortDir, setSortDir] = useState("desc");
+  const [filterSrc, setFilterSrc] = useState("Tous");
+  const [filterCond, setFilterCond] = useState("Tous");
+  const [scoreMode, setScoreMode] = useState("score2"); // which score to highlight
+  const [showMethod, setShowMethod] = useState(false);
+  const [nextId, setNextId] = useState(100);
+
+  const scored = useMemo(() => computeScores(rows), [rows]);
+
+  const filtered = useMemo(() => {
+    let r = scored;
+    if (filterSrc !== "Tous") r = r.filter(x => x.src === filterSrc);
+    if (filterCond !== "Tous") r = r.filter(x => x.cond === filterCond);
+    return r;
+  }, [scored, filterSrc, filterCond]);
+
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a,b) => {
+      let va = a[sortBy], vb = b[sortBy];
+      if (typeof va === "string") va = va.toLowerCase();
+      if (typeof vb === "string") vb = vb.toLowerCase();
+      if (va < vb) return sortDir==="asc"?-1:1;
+      if (va > vb) return sortDir==="asc"?1:-1;
+      return 0;
+    });
+  }, [filtered, sortBy, sortDir]);
+
+  const handleSort = (col) => {
+    if (sortBy === col) setSortDir(d => d==="asc"?"desc":"asc");
+    else { setSortBy(col); setSortDir("desc"); }
+  };
+
+  const updateRow = useCallback((id, field, val) => {
+    setRows(prev => prev.map(r => r.id===id ? {...r, [field]:val} : r));
+  }, []);
+
+  const deleteRow = (id) => setRows(prev => prev.filter(r => r.id!==id));
+
+  const addRow = () => {
+    setRows(prev => [...prev, {
+      id: nextId, src:"CarGurus", annee:2024, trim:"Veloce eAWD",
+      cond:"Usagé", km:0, prix:35000, coul:"", carb:"Hybride PHEV",
+      vendeur:"", ville:"", prov:"QC"
+    }]);
+    setNextId(n => n+1);
+  };
+
+  const avgPrix = Math.round(scored.reduce((a,r)=>a+r.prix,0)/scored.length);
+  const minPrix = Math.min(...scored.map(r=>r.prix));
+  const maxPrix = Math.max(...scored.map(r=>r.prix));
+
+  const Th = ({col, children, cls=""}) => {
+    const active = sortBy===col;
+    const arrow = active ? (sortDir==="asc"?"↑":"↓") : "↕";
+    return (
+      <th className={`${cls} ${active?"sorted":""}`} onClick={()=>handleSort(col)}>
+        {children} <span className={`sort-arrow ${active?"active":""}`}>{arrow}</span>
+      </th>
+    );
+  };
+
+  return (
+    <div>
+      {/* HEADER */}
+      <div className="header">
+        <div className="header-left">
+          <div className="logo-badge">AR</div>
+          <div>
+            <div className="header-title">ALFA ROMEO TONALE — SCORING DYNAMIQUE</div>
+            <div className="header-sub">Modifie n'importe quelle donnée → scores recalculés automatiquement</div>
+          </div>
+        </div>
+        <div className="header-stats">
+          <div className="stat-pill"><div className="num">{rows.length}</div><div className="lbl">Annonces</div></div>
+          <div className="stat-pill"><div className="num">{fmt(minPrix)}</div><div className="lbl">Prix min</div></div>
+          <div className="stat-pill"><div className="num">{fmt(avgPrix)}</div><div className="lbl">Prix moy.</div></div>
+          <div className="stat-pill"><div className="num">{fmt(maxPrix)}</div><div className="lbl">Prix max</div></div>
+        </div>
+      </div>
+
+      {/* CONTROLS */}
+      <div className="controls">
+        <div className="ctrl-group">
+          <label>Source</label>
+          <select value={filterSrc} onChange={e=>setFilterSrc(e.target.value)}>
+            {["Tous","CarGurus","AutoTrader"].map(o=><option key={o}>{o}</option>)}
+          </select>
+        </div>
+        <div className="ctrl-group">
+          <label>Condition</label>
+          <select value={filterCond} onChange={e=>setFilterCond(e.target.value)}>
+            {["Tous","Neuf","Usagé"].map(o=><option key={o}>{o}</option>)}
+          </select>
+        </div>
+        <div className="sep"/>
+        <div className="ctrl-group">
+          <label>Trier par score</label>
+          <select value={scoreMode} onChange={e=>{setScoreMode(e.target.value);setSortBy(e.target.value);setSortDir("desc");}}>
+            <option value="score2">1-2 ans</option>
+            <option value="score3">2-3 ans</option>
+            <option value="score5">5+ ans</option>
+          </select>
+        </div>
+        <div className="sep"/>
+        <span style={{color:"var(--muted)",fontSize:11}}>Résultats: <strong style={{color:"var(--text)"}}>{sorted.length}</strong></span>
+        <button className="btn-add" onClick={addRow}>+ Ajouter annonce</button>
+      </div>
+
+      {/* LEGEND */}
+      <div className="legend">
+        <span style={{fontSize:11,color:"#555",textTransform:"uppercase",letterSpacing:1}}>Score:</span>
+        {[["🏆 Excellent","#16A34A","80-100"],["✅ Bon deal","#22C55E","65-79"],["👍 Correct","#EAB308","50-64"],["⚠️ Passable","#F97316","35-49"],["❌ À éviter","#EF4444","0-34"]].map(([l,c,r])=>(
+          <div key={l} className="legend-item">
+            <span className="score-badge-mini" style={{background:c}}>{l}</span>
+            <span>{r}</span>
+          </div>
+        ))}
+        <div className="sep"/>
+        <div className="legend-item"><span style={{fontSize:11,color:"#555"}}>Algo:</span> <span style={{fontSize:11}}>40% Prix marché + 25% Kilométrage + 35% Dépréciation annuelle</span></div>
+      </div>
+
+      {/* TABLE */}
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              {/* Identity */}
+              <th className="th-id">Rang</th>
+              <Th col="src" cls="th-info">Source</Th>
+              <Th col="annee" cls="th-info">Année</Th>
+              <Th col="trim" cls="th-info">Trim</Th>
+              <Th col="cond" cls="th-info">Cond.</Th>
+              <Th col="km" cls="th-info">KM</Th>
+              <Th col="coul" cls="th-info">Couleur</Th>
+              <Th col="carb" cls="th-info">Carburant</Th>
+              <Th col="ville" cls="th-info">Ville</Th>
+              {/* Prix */}
+              <Th col="prix" cls="th-price th-section-start">Prix achat</Th>
+              {/* Forecasts */}
+              <Th col="rv2" cls="th-rev th-section-start">🔮 Revente 2ans</Th>
+              <Th col="rv3" cls="th-rev">🔮 Revente 3ans</Th>
+              <Th col="rv5" cls="th-rev">🔮 Revente 5ans</Th>
+              {/* Depr/an */}
+              <Th col="dpy2" cls="th-depr th-section-start">💸 Dépr./an 2ans</Th>
+              <Th col="dpy3" cls="th-depr">💸 Dépr./an 3ans</Th>
+              <Th col="dpy5" cls="th-depr">💸 Dépr./an 5ans</Th>
+              {/* Scores */}
+              <Th col="score2" cls="th-score th-section-start">⭐ Score 1-2ans</Th>
+              <Th col="score3" cls="th-score">⭐ Score 2-3ans</Th>
+              <Th col="score5" cls="th-score">⭐ Score 5ans</Th>
+              {/* Verdicts */}
+              <th className="th-score">Verdict {scoreMode==="score2"?"1-2ans":scoreMode==="score3"?"2-3ans":"5ans"}</th>
+              <th style={{width:36}}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((r, idx) => {
+              const [vLabel, vColor] = verdict(r[scoreMode]);
+              const rank = idx+1;
+              return (
+                <tr key={r.id}>
+                  <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
+                  <td>
+                    <EditCell value={r.src} options={["CarGurus","AutoTrader"]} onChange={v=>updateRow(r.id,"src",v)} />
+                  </td>
+                  <td>
+                    <EditCell value={r.annee} type="number" onChange={v=>updateRow(r.id,"annee",v)} />
+                  </td>
+                  <td style={{minWidth:160}}>
+                    <EditCell value={r.trim} onChange={v=>updateRow(r.id,"trim",v)} />
+                  </td>
+                  <td>
+                    <EditCell value={r.cond} options={["Neuf","Usagé"]} onChange={v=>updateRow(r.id,"cond",v)} />
+                  </td>
+                  <td>
+                    <EditCell value={r.km} type="number" onChange={v=>updateRow(r.id,"km",v)} />
+                  </td>
+                  <td>
+                    <EditCell value={r.coul} onChange={v=>updateRow(r.id,"coul",v)} />
+                  </td>
+                  <td>
+                    <EditCell value={r.carb} options={["Hybride PHEV","Hybride eAWD","Hybride 1.3L","Hybride","Essence","Électrique"]} onChange={v=>updateRow(r.id,"carb",v)} />
+                  </td>
+                  <td>
+                    <EditCell value={r.ville} onChange={v=>updateRow(r.id,"ville",v)} />
+                  </td>
+                  {/* PRIX — éditable */}
+                  <td className="td-section-start">
+                    <EditCell value={r.prix} type="number" onChange={v=>updateRow(r.id,"prix",v)} className="num" />
+                  </td>
+                  {/* FORECASTS — calculés */}
+                  <td className="td-section-start price-cell resale">{fmt(r.rv2)}</td>
+                  <td className="price-cell resale">{fmt(r.rv3)}</td>
+                  <td className="price-cell resale">{fmt(r.rv5)}</td>
+                  {/* DEPR PAR AN */}
+                  <td className="td-section-start price-cell depr-ann">{fmt(Math.round(r.dpy2))}/an</td>
+                  <td className="price-cell depr-ann">{fmt(Math.round(r.dpy3))}/an</td>
+                  <td className="price-cell depr-ann">{fmt(Math.round(r.dpy5))}/an</td>
+                  {/* SCORES */}
+                  <td className="td-section-start"><ScoreCell score={r.score2} /></td>
+                  <td><ScoreCell score={r.score3} /></td>
+                  <td><ScoreCell score={r.score5} /></td>
+                  {/* VERDICT */}
+                  <td>
+                    <span className="verdict" style={{background:vColor+"22",color:vColor,border:`1px solid ${vColor}44`}}>
+                      {vLabel}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="btn-del" onClick={()=>deleteRow(r.id)} title="Supprimer">✕</button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* METHODOLOGY */}
+      <div className="method-panel">
+        <button className="method-toggle" onClick={()=>setShowMethod(s=>!s)}>
+          <span>📋 Méthodologie de l'algorithme de scoring</span>
+          <span>{showMethod?"▲ Fermer":"▼ Voir le détail"}</span>
+        </button>
+        {showMethod && (
+          <div className="method-body">
+            <div className="method-section">
+              <h4>Composantes du score (0-100)</h4>
+              <ul>
+                <li><strong style={{color:"#60A5FA"}}>40%</strong> — Position prix dans l'échantillon<br/>Prix le plus bas = 100, plus haut = 0. Courbe convexe (^0.75) pour amplifier les extrêmes.</li>
+                <li><strong style={{color:"#4ADE80"}}>25%</strong> — Kilométrage<br/>&lt;5k=95 / 15k=88 / 25k=78 / 35k=68 / 45k=55 / 60k+=25 pts</li>
+                <li><strong style={{color:"#C084FC"}}>35%</strong> — Coût de dépréciation annuel<br/>Normalisé sur l'échantillon. Moins ça coûte par an, mieux c'est.</li>
+              </ul>
+            </div>
+            <div className="method-section">
+              <h4>Modèle de dépréciation</h4>
+              <ul>
+                <li>Taux de base: an1=14%, an2=12%, an3=10%, an4=9%, an5=8%</li>
+                <li>Essence: -1.0%/an (plus stable)</li>
+                <li>PHEV/Hybride: +1.5%/an (batterie, incertitude tech)</li>
+                <li>KM &gt;50k: +2.0%/an | &gt;30k: +1.0%/an | &lt;5k: -1.0%/an</li>
+                <li>Veloce/Tributo/Intensa: -0.8%/an (plus désirable)</li>
+                <li>Neuf: choc -15% à l'achat immédiat</li>
+                <li>Plancher: min 15% du prix d'achat</li>
+              </ul>
+            </div>
+            <div className="method-section">
+              <h4>Comment utiliser</h4>
+              <ul>
+                <li>Clique sur <strong>n'importe quelle cellule</strong> pour modifier (année, KM, prix, carburant…)</li>
+                <li>Les scores et forecasts se <strong>recalculent instantanément</strong></li>
+                <li>Change le <strong>tri par score</strong> selon ta durée de possession prévue</li>
+                <li>Filtre par source ou condition avec les menus en haut</li>
+                <li>Ajoute une annonce manquante avec <strong>+ Ajouter</strong></li>
+              </ul>
+            </div>
+            <div className="method-section">
+              <h4>Limites du modèle</h4>
+              <ul>
+                <li>Forecasts basés sur courbes historiques moyennes marché CA</li>
+                <li>Ne tient pas compte de l'état mécanique réel</li>
+                <li>Scores sont <strong>relatifs à l'échantillon</strong> — si tu retires des annonces, les scores changent</li>
+                <li>KM=0 pour neuf → score km estimé à 85/100</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
