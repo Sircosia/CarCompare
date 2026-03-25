@@ -11,7 +11,10 @@
 <style>
 :root{--red:#27AE60;--dark:#0A0F0A;--darker:#060906;--card:#121A12;--card2:#182018;--border:#1E2E1E;--text:#E8F5E8;--muted:#5A7A5A;--green:#27AE60;--score-ex:#16A34A;--score-good:#22C55E;--score-ok:#EAB308;--score-meh:#F97316;--score-bad:#EF4444;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;}
+body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;transition:background 0.3s,color 0.3s;}
+body.light-mode{--darker:#F5F5F5;--dark:#EBEBEB;--card:#FFFFFF;--card2:#F0F0F0;--border:#DDDDDD;--text:#1A1A1A;--muted:#666666;}
+.toggle-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
+.toggle-btn:hover{border-color:var(--green);}
 .header{background:linear-gradient(135deg,#050A05 0%,#0A1F0A 50%,#050A05 100%);border-bottom:2px solid var(--green);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo-badge{background:var(--green);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;padding:6px 14px;letter-spacing:2px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
 .header-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;}
@@ -158,6 +161,7 @@ function App(){
   const [scoreMode,setScoreMode]=useState("s2");
   const [showMethod,setShowMethod]=useState(false);
   const [nextId,setNextId]=useState(100);
+  const [darkMode,setDarkMode]=useState(true);
 
   const scored=useMemo(()=>computeScores(rows),[rows]);
   const filtered=useMemo(()=>{
@@ -175,8 +179,14 @@ function App(){
   const handleSort=col=>{if(sortBy===col)setSortDir(d=>d==="asc"?"desc":"asc");else{setSortBy(col);setSortDir("desc");}};
   const updateRow=useCallback((id,field,val)=>setRows(prev=>prev.map(r=>r.id===id?{...r,[field]:val}:r)),[]);
   const deleteRow=id=>setRows(prev=>prev.filter(r=>r.id!==id));
-  const addRow=()=>{setRows(prev=>[...prev,{id:nextId,src:"CarGurus.ca",annee:2022,trim:"Quadrifoglio AWD",cond:"Usagé",km:50000,prix:55000,coul:"",carb:"Essence",vendeur:"",ville:"",prov:"QC",deal:""}]);setNextId(n=>n+1);};
+  const addRow=()=>{
+    const newId=Date.now();
+    setRows(prev=>[...prev,{id:newId,src:"CarGurus.ca",annee:2022,trim:"Quadrifoglio AWD",cond:"Usagé",km:50000,prix:55000,coul:"",carb:"Essence",vendeur:"",ville:"",prov:"QC",deal:""}]);
+    setSortBy("s2"); setSortDir("desc");
+    setTimeout(()=>{const rows=document.querySelectorAll("tbody tr");if(rows.length)rows[rows.length-1].scrollIntoView({behavior:"smooth",block:"center"});},100);
+  };
 
+  React.useEffect(()=>{document.body.className=darkMode?'':'light-mode';},[darkMode]);
   const allPrix=scored.map(r=>r.prix);
   const avgPrix=Math.round(allPrix.reduce((a,b)=>a+b,0)/allPrix.length);
   const provs=["Tous",...new Set(rows.map(r=>r.prov).filter(Boolean))].sort();
@@ -195,6 +205,7 @@ function App(){
         <div className="header-sub">505 HP Ferrari V6 · Modifie n'importe quelle donnée → scores recalculés en temps réel</div></div>
       </div>
       <div className="header-stats">
+        <button className="toggle-btn" onClick={()=>setDarkMode(d=>!d)}>{darkMode?'☀️ Light':'🌙 Dark'}</button>
         <div className="stat-pill"><div className="num">{rows.length}</div><div className="lbl">Annonces</div></div>
         <div className="stat-pill"><div className="num">{fmt(Math.min(...allPrix))}</div><div className="lbl">Prix min</div></div>
         <div className="stat-pill"><div className="num">{fmt(avgPrix)}</div><div className="lbl">Prix moy.</div></div>

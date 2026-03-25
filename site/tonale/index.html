@@ -39,7 +39,34 @@
     font-family: 'Barlow', sans-serif;
     font-size: 13px;
     min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
   }
+  body.light-mode {
+    --darker: #F5F5F5;
+    --dark: #EBEBEB;
+    --card: #FFFFFF;
+    --card2: #F0F0F0;
+    --border: #DDDDDD;
+    --text: #1A1A1A;
+    --muted: #666666;
+    --red-light: rgba(192,0,0,0.1);
+    --red-mid: rgba(192,0,0,0.08);
+  }
+  .toggle-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .toggle-btn:hover { border-color: var(--red); }
 
   /* HEADER */
   .header {
@@ -513,6 +540,7 @@ function App() {
   const [scoreMode, setScoreMode] = useState("score2"); // which score to highlight
   const [showMethod, setShowMethod] = useState(false);
   const [nextId, setNextId] = useState(100);
+  const [darkMode, setDarkMode] = useState(true);
 
   const scored = useMemo(() => computeScores(rows), [rows]);
 
@@ -546,13 +574,23 @@ function App() {
   const deleteRow = (id) => setRows(prev => prev.filter(r => r.id!==id));
 
   const addRow = () => {
+    const newId = Date.now();
     setRows(prev => [...prev, {
-      id: nextId, src:"CarGurus", annee:2024, trim:"Veloce eAWD",
+      id: newId, src:"CarGurus", annee:2024, trim:"Veloce eAWD",
       cond:"Usagé", km:0, prix:35000, coul:"", carb:"Hybride PHEV",
       vendeur:"", ville:"", prov:"QC"
     }]);
-    setNextId(n => n+1);
+    setSortBy("s2");
+    setSortDir("desc");
+    setTimeout(() => {
+      const rows = document.querySelectorAll("tbody tr");
+      if(rows.length) rows[rows.length-1].scrollIntoView({behavior:"smooth", block:"center"});
+    }, 100);
   };
+
+  React.useEffect(() => {
+    document.body.className = darkMode ? '' : 'light-mode';
+  }, [darkMode]);
 
   const avgPrix = Math.round(scored.reduce((a,r)=>a+r.prix,0)/scored.length);
   const minPrix = Math.min(...scored.map(r=>r.prix));
@@ -580,6 +618,9 @@ function App() {
           </div>
         </div>
         <div className="header-stats">
+          <button className="toggle-btn" onClick={() => setDarkMode(d => !d)}>
+            {darkMode ? '☀️ Light' : '🌙 Dark'}
+          </button>
           <div className="stat-pill"><div className="num">{rows.length}</div><div className="lbl">Annonces</div></div>
           <div className="stat-pill"><div className="num">{fmt(minPrix)}</div><div className="lbl">Prix min</div></div>
           <div className="stat-pill"><div className="num">{fmt(avgPrix)}</div><div className="lbl">Prix moy.</div></div>
