@@ -69,12 +69,14 @@
   .toggle-btn:hover { border-color: var(--red); }
 
   /* HEADER */
+  .sticky-top {
+    position: sticky; top: 0; z-index: 100;
+  }
   .header {
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
     border-bottom: 2px solid var(--red);
     padding: 18px 28px;
     display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
   }
   .header-left { display: flex; align-items: center; gap: 16px; }
   .logo-badge {
@@ -118,6 +120,7 @@
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
   }
+  .legend { border-bottom: 1px solid var(--border); }
   .controls label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
   .controls select, .controls input {
     background: var(--card2);
@@ -169,7 +172,7 @@
   /* TABLE WRAPPER */
   .table-wrap { overflow-x: auto; padding: 0 0 40px 0; }
   table { width: 100%; border-collapse: collapse; }
-  thead tr { background: var(--dark); position: sticky; top: 64px; z-index: 50; }
+  thead tr { background: var(--dark); position: sticky; top: 0; z-index: 50; }
   th {
     padding: 10px 8px;
     text-align: left;
@@ -610,6 +613,7 @@ function App() {
   return (
     <div>
       {/* HEADER */}
+      <div className="sticky-top">
       <div className="header">
         <div className="header-left">
           <div className="logo-badge">AR</div>
@@ -669,6 +673,8 @@ function App() {
         <div className="sep"/>
         <div className="legend-item"><span style={{fontSize:11,color:"#555"}}>Algo:</span> <span style={{fontSize:11}}>40% Prix marché + 25% Kilométrage + 35% Dépréciation annuelle</span></div>
       </div>
+
+      </div>{/* end sticky-top */}
 
       {/* TABLE */}
       <div className="table-wrap">

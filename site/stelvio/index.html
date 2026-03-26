@@ -11,7 +11,7 @@
 <style>
 :root{--red:#27AE60;--dark:#0A0F0A;--darker:#060906;--card:#121A12;--card2:#182018;--border:#1E2E1E;--text:#E8F5E8;--muted:#5A7A5A;--green:#27AE60;--score-ex:#16A34A;--score-good:#22C55E;--score-ok:#EAB308;--score-meh:#F97316;--score-bad:#EF4444;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;transition:background 0.3s,color 0.3s;}
+.sticky-top{position:sticky;top:0;z-index:100;}body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;transition:background 0.3s,color 0.3s;}
 body.light-mode{--darker:#F8F8F8;--dark:#EBEBEB;--card:#FFFFFF;--card2:#F0F0F0;--border:#DDDDDD;--text:#1A1A1A;--muted:#666666;--green:#1A8A40;}
 .toggle-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
 .toggle-btn:hover{border-color:var(--green);}
@@ -41,7 +41,7 @@ body.light-mode thead tr{background:#F0F0F0;}
 body.light-mode .method-panel{background:#FFFFFF;border-color:#DDD;}
 body.light-mode .method-body{border-top-color:#DDD;}
 body.light-mode .score-bar-wrap{background:#DDD;}
-.header{background:linear-gradient(135deg,#050A05 0%,#0A1F0A 50%,#050A05 100%);border-bottom:2px solid var(--green);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.header{background:linear-gradient(135deg,#050A05 0%,#0A1F0A 50%,#050A05 100%);border-bottom:2px solid var(--green);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;}
 .logo-badge{background:var(--green);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;padding:6px 14px;letter-spacing:2px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
 .header-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;}
 .header-sub{color:var(--muted);font-size:11px;margin-top:2px;}
@@ -61,7 +61,7 @@ body.light-mode .score-bar-wrap{background:#DDD;}
 .score-badge-mini{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;color:#fff;}
 .table-wrap{overflow-x:auto;padding-bottom:40px;}
 table{width:100%;border-collapse:collapse;}
-thead tr{background:var(--dark);position:sticky;top:62px;z-index:50;}
+thead tr{background:var(--dark);position:sticky;top:0;z-index:50;}
 th{padding:9px 8px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
 th:hover{color:var(--text);}
 th.sorted{color:var(--green);}
@@ -267,6 +267,7 @@ function App(){
       <span style={{fontSize:11,color:"#3A5A3A"}}>Algo: 40% Prix marché + 25% Kilométrage + 35% Dépréciation annuelle | V6 biturbo 2.9L Ferrari 505hp</span>
     </div>
 
+    </div>{/* end sticky-top */}
     <div className="table-wrap">
       <table>
         <thead><tr>
