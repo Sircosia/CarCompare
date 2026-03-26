@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeep Wrangler 4xe — Scoring</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--acc:#5A8A1E;--dark:#0A0F06;--darker:#060906;--card:#111A08;--card2:#162010;--border:#1E2E12;--text:#E8F0D8;--muted:#6A8A4A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;transition:background 0.3s,color 0.3s;}
+body.light-mode{--darker:#F5F7F0;--dark:#E8ECE0;--card:#FFFFFF;--card2:#F0F4E8;--border:#D0D8C0;--text:#1A2010;--muted:#5A7A3A;--acc:#4A7A10;}
+.sticky-top{position:sticky;top:0;z-index:100;}
+.header{background:linear-gradient(135deg,#050A02 0%,#1A2A08 50%,#050A02 100%);border-bottom:3px solid var(--acc);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;}
+body.light-mode .header{background:linear-gradient(135deg,#2A3A10 0%,#3D5A1E 50%,#2A3A10 100%);}
+.logo-badge{background:var(--acc);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;padding:6px 14px;letter-spacing:2px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;}
+.header-sub{color:#8AAA6A;font-size:11px;margin-top:2px;}
+.header-stats{display:flex;gap:12px;align-items:center;}
+.stat-pill{text-align:center;background:var(--card);border:1px solid var(--border);padding:5px 12px;border-radius:4px;}
+.stat-pill .num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:var(--acc);}
+.stat-pill .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.toggle-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:5px;transition:all 0.2s;}
+.toggle-btn:hover{border-color:var(--acc);}
+.controls{padding:10px 28px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+body.light-mode .controls{background:#F0F4E8;}
+.controls label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.controls select{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:5px 10px;font-size:12px;font-family:'Barlow',sans-serif;border-radius:3px;outline:none;cursor:pointer;}
+.controls select:focus{border-color:var(--acc);}
+.ctrl-group{display:flex;align-items:center;gap:8px;}
+.sep{width:1px;height:24px;background:var(--border);}
+.btn-add{background:var(--acc);color:#fff;border:none;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;border-radius:3px;}
+.legend{padding:7px 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--darker);border-bottom:1px solid var(--border);}
+body.light-mode .legend{background:#E8ECE0;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.score-badge-mini{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;color:#fff;}
+.rubicon-badge{background:#8B6914;color:#FEF9E7;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;letter-spacing:0.5px;}
+.table-wrap{overflow-x:auto;padding-bottom:40px;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--dark);position:sticky;top:0;z-index:50;}
+body.light-mode thead tr{background:#D0D8C0;}
+th{padding:9px 8px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--text);}th.sorted{color:var(--acc);}
+th.th-info{color:#6A8A4A;}th.th-price{color:#3B82F6;}th.th-rev{color:#22C55E;}th.th-depr{color:#F97316;}th.th-score{color:#A855F7;}
+tbody tr{border-bottom:1px solid #111A08;}
+body.light-mode tbody tr{border-bottom:1px solid #D0D8C0;}
+tbody tr:hover{background:rgba(90,138,30,0.06);}
+td{padding:7px 8px;vertical-align:middle;font-size:12px;color:var(--text);white-space:nowrap;}
+td.rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:17px;color:#2A3A10;text-align:center;width:36px;}
+td.rank.top3{color:var(--acc);}
+body.light-mode td{color:#1A2010;}
+.editable{background:transparent;border:1px solid transparent;color:var(--text);font-size:12px;font-family:'Barlow',sans-serif;padding:3px 5px;border-radius:3px;width:100%;outline:none;transition:border-color 0.15s,background 0.15s;}
+.editable:hover{border-color:var(--border);background:var(--card2);}
+.editable:focus{border-color:var(--acc);background:var(--card2);}
+.editable.num{text-align:right;width:80px;}
+select.editable{cursor:pointer;appearance:none;padding-right:18px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center;}
+body.light-mode .editable{color:#1A2010;}
+.price-cell{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;}
+.price-cell.resale{color:#22C55E;}.price-cell.depr-ann{color:#F59E0B;font-size:12px;}
+.score-cell{display:flex;align-items:center;gap:5px;min-width:95px;}
+.score-bar-wrap{flex:1;height:4px;background:#1E2E12;border-radius:3px;overflow:hidden;}
+body.light-mode .score-bar-wrap{background:#C0C8B0;}
+.score-bar{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;min-width:28px;text-align:right;}
+.verdict{font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px;white-space:nowrap;}
+.btn-del{background:none;border:1px solid #1E2E12;color:#3A4A2A;width:20px;height:20px;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.btn-del:hover{border-color:var(--acc);color:var(--acc);}
+.th-section-start{border-left:2px solid #1E2E12;}td.td-section-start{border-left:1px solid #1A2A0A;}
+.deal-badge{font-size:10px;font-weight:600;padding:2px 5px;border-radius:2px;}
+tbody tr.new-row{outline:2px solid var(--acc) !important;}
+/* Row colors */
+.row-cg-odd{background:#0D1A07;}.row-cg-even{background:#111E0A;}
+.row-at-odd{background:#080D18;}.row-at-even{background:#0A1020;}
+.row-rub{background:#1A1500;}
+body.light-mode .row-cg-odd{background:#F0F5E8;}
+body.light-mode .row-cg-even{background:#E4EDD8;}
+body.light-mode .row-at-odd{background:#EBF5FB;}
+body.light-mode .row-at-even{background:#D6EAF8;}
+body.light-mode .row-rub{background:#FEF9E7;}
+body.light-mode .price-cell.resale{color:#16A34A;}
+body.light-mode .price-cell.depr-ann{color:#D68910;}
+.method-panel{margin:0 28px 40px;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.method-toggle{padding:11px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border:none;background:none;width:100%;text-align:left;}
+.method-body{padding:18px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;}
+.method-section h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--acc);margin-bottom:8px;}
+.method-section li{font-size:12px;color:var(--muted);line-height:1.7;}
+.method-section ul{padding-left:16px;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:var(--darker);}::-webkit-scrollbar-thumb{background:#1E2E12;border-radius:3px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>const __DATA__=[{"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 35234, "prix": 34999, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Longueuil", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 26672, "rv3": 23685, "rv5": 19312, "d2": 8327, "d3": 11314, "d5": 15687, "dy2": 4163, "dy3": 3771, "dy5": 3137, "s2": 95.0, "s3": 94.9, "s5": 94.8, "id": 1}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 34527, "prix": 35498, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 27053, "rv3": 24023, "rv5": 19588, "d2": 8445, "d3": 11475, "d5": 15910, "dy2": 4222, "dy3": 3825, "dy5": 3182, "s2": 90.7, "s3": 90.4, "s5": 90.1, "id": 2}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 43284, "prix": 34998, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26364, "rv3": 23411, "rv5": 19089, "d2": 8634, "d3": 11587, "d5": 15909, "dy2": 4317, "dy3": 3862, "dy5": 3181, "s2": 89.2, "s3": 89.9, "s5": 90.6, "id": 3}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 41304, "prix": 34998, "coul": "Red (Burgundy)", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26364, "rv3": 23411, "rv5": 19089, "d2": 8634, "d3": 11587, "d5": 15909, "dy2": 4317, "dy3": 3862, "dy5": 3181, "s2": 89.2, "s3": 89.9, "s5": 90.6, "id": 4}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 35013, "prix": 35998, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27434, "rv3": 24361, "rv5": 19864, "d2": 8564, "d3": 11637, "d5": 16134, "dy2": 4282, "dy3": 3879, "dy5": 3226, "s2": 86.3, "s3": 85.8, "s5": 85.2, "id": 5}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 42645, "prix": 35495, "coul": "Sarge Green", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Jérôme", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 26739, "rv3": 23744, "rv5": 19360, "d2": 8756, "d3": 11751, "d5": 16135, "dy2": 4378, "dy3": 3917, "dy5": 3227, "s2": 84.8, "s3": 85.3, "s5": 85.9, "id": 6}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 54153, "prix": 34997, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Montréal", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 26063, "rv3": 23144, "rv5": 18871, "d2": 8934, "d3": 11853, "d5": 16126, "dy2": 4467, "dy3": 3951, "dy5": 3225, "s2": 82.7, "s3": 84.2, "s5": 85.7, "id": 7}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 59309, "prix": 34998, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26064, "rv3": 23145, "rv5": 18872, "d2": 8934, "d3": 11853, "d5": 16126, "dy2": 4467, "dy3": 3951, "dy5": 3225, "s2": 82.7, "s3": 84.2, "s5": 85.7, "id": 8}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 19848, "prix": 37498, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Eustache", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 29169, "rv3": 26193, "rv5": 21358, "d2": 8329, "d3": 11305, "d5": 16140, "dy2": 4164, "dy3": 3768, "dy5": 3228, "s2": 82.5, "s3": 82.5, "s5": 78.9, "id": 9}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 38718, "prix": 36498, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "", "ville": "Vaudreuil-Dorion", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27815, "rv3": 24699, "rv5": 20139, "d2": 8683, "d3": 11799, "d5": 16359, "dy2": 4341, "dy3": 3933, "dy5": 3271, "s2": 81.8, "s3": 81.0, "s5": 80.2, "id": 10}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 44608, "prix": 35900, "coul": "", "carb": "Hybride PHEV", "vendeur": "", "ville": "Sainte-Rose", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27044, "rv3": 24015, "rv5": 19581, "d2": 8856, "d3": 11885, "d5": 16319, "dy2": 4428, "dy3": 3961, "dy5": 3263, "s2": 81.2, "s3": 81.5, "s5": 81.9, "id": 11}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 45156, "prix": 35650, "coul": "Red", "carb": "Hybride PHEV", "vendeur": "", "ville": "Laval", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26550, "rv3": 23576, "rv5": 19223, "d2": 9100, "d3": 12074, "d5": 16427, "dy2": 4550, "dy3": 4024, "dy5": 3285, "s2": 80.0, "s3": 81.3, "s5": 82.6, "id": 12}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 32184, "prix": 36995, "coul": "Purple", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville Signature", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 28194, "rv3": 25036, "rv5": 20414, "d2": 8801, "d3": 11959, "d5": 16581, "dy2": 4400, "dy3": 3986, "dy5": 3316, "s2": 77.2, "s3": 76.2, "s5": 75.1, "id": 13}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 37965, "prix": 37336, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Concord (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 28453, "rv3": 25267, "rv5": 20602, "d2": 8883, "d3": 12069, "d5": 16734, "dy2": 4441, "dy3": 4023, "dy5": 3346, "s2": 73.9, "s3": 72.7, "s5": 71.5, "id": 14}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 50292, "prix": 35998, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26809, "rv3": 23806, "rv5": 19411, "d2": 9189, "d3": 12192, "d5": 16587, "dy2": 4594, "dy3": 4064, "dy5": 3317, "s2": 73.6, "s3": 74.7, "s5": 75.9, "id": 15}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 59636, "prix": 35995, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26807, "rv3": 23804, "rv5": 19409, "d2": 9188, "d3": 12191, "d5": 16586, "dy2": 4594, "dy3": 4063, "dy5": 3317, "s2": 73.6, "s3": 74.7, "s5": 75.9, "id": 16}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53141, "prix": 35990, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Repentigny", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26803, "rv3": 23801, "rv5": 19407, "d2": 9187, "d3": 12189, "d5": 16583, "dy2": 4593, "dy3": 4063, "dy5": 3316, "s2": 73.6, "s3": 74.8, "s5": 76.0, "id": 17}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 56527, "prix": 36056, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Concord (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 26852, "rv3": 23845, "rv5": 19442, "d2": 9204, "d3": 12211, "d5": 16614, "dy2": 4602, "dy3": 4070, "dy5": 3322, "s2": 73.0, "s3": 74.1, "s5": 75.3, "id": 18}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 48500, "prix": 36500, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Richmond Hill (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 27183, "rv3": 24138, "rv5": 19682, "d2": 9317, "d3": 12362, "d5": 16818, "dy2": 4658, "dy3": 4120, "dy5": 3363, "s2": 72.1, "s3": 73.0, "s5": 74.0, "id": 19}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 58716, "prix": 37000, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Mirabel", "prov": "QC", "deal": "Great Deal", "vin": "", "rv2": 28004, "rv3": 25063, "rv5": 20754, "d2": 8996, "d3": 11937, "d5": 16246, "dy2": 4498, "dy3": 3979, "dy5": 3249, "s2": 71.2, "s3": 72.6, "s5": 74.0, "id": 20}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 42816, "prix": 36995, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "Salaberry-de-Valleyfield", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27869, "rv3": 24747, "rv5": 20179, "d2": 9126, "d3": 12248, "d5": 16816, "dy2": 4563, "dy3": 4082, "dy5": 3363, "s2": 71.0, "s3": 70.9, "s5": 70.7, "id": 21}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53817, "prix": 36495, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27179, "rv3": 24135, "rv5": 19679, "d2": 9316, "d3": 12360, "d5": 16816, "dy2": 4658, "dy3": 4120, "dy5": 3363, "s2": 68.8, "s3": 69.8, "s5": 70.8, "id": 22}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 55095, "prix": 37895, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29211, "rv3": 26378, "rv5": 22228, "d2": 8684, "d3": 11517, "d5": 15667, "dy2": 4342, "dy3": 3839, "dy5": 3133, "s2": 68.3, "s3": 70.2, "s5": 72.1, "id": 23}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 51351, "prix": 37998, "coul": "Silver", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Eustache", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29291, "rv3": 26449, "rv5": 22289, "d2": 8707, "d3": 11549, "d5": 15709, "dy2": 4353, "dy3": 3849, "dy5": 3141, "s2": 67.3, "s3": 69.1, "s5": 71.1, "id": 24}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara 4WD", "cond": "Usagé", "km": 87872, "prix": 34995, "coul": "", "carb": "Hybride PHEV", "vendeur": "Boucherville Chrysler", "ville": "Boucherville", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 25280, "rv3": 22246, "rv5": 17819, "d2": 9715, "d3": 12749, "d5": 17176, "dy2": 4857, "dy3": 4249, "dy5": 3435, "s2": 65.3, "s3": 67.1, "s5": 69.1, "id": 25}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 55908, "prix": 36995, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 27551, "rv3": 24466, "rv5": 19949, "d2": 9444, "d3": 12529, "d5": 17046, "dy2": 4722, "dy3": 4176, "dy5": 3409, "s2": 64.0, "s3": 64.7, "s5": 65.5, "id": 26}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 50756, "prix": 36995, "coul": "White", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 27551, "rv3": 24466, "rv5": 19949, "d2": 9444, "d3": 12529, "d5": 17046, "dy2": 4722, "dy3": 4176, "dy5": 3409, "s2": 64.0, "s3": 64.7, "s5": 65.5, "id": 27}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 44470, "prix": 38995, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Salaberry-de-Valleyfield", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 30400, "rv3": 27451, "rv5": 23133, "d2": 8595, "d3": 11544, "d5": 15862, "dy2": 4297, "dy3": 3848, "dy5": 3172, "s2": 63.6, "s3": 64.3, "s5": 65.0, "id": 28}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 38674, "prix": 38495, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 29337, "rv3": 26051, "rv5": 21241, "d2": 9158, "d3": 12444, "d5": 17254, "dy2": 4579, "dy3": 4148, "dy5": 3450, "s2": 62.1, "s3": 60.3, "s5": 58.4, "id": 29}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 37355, "prix": 38500, "coul": "Red", "carb": "Hybride PHEV", "vendeur": "", "ville": "Richmond Hill (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 29341, "rv3": 26054, "rv5": 21244, "d2": 9159, "d3": 12446, "d5": 17256, "dy2": 4579, "dy3": 4148, "dy5": 3451, "s2": 62.0, "s3": 60.3, "s5": 58.3, "id": 30}, {"src": "CarGurus.ca", "annee": 2021, "trim": "High Altitude 4WD", "cond": "Usagé", "km": 39369, "prix": 38998, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 30061, "rv3": 26845, "rv5": 22132, "d2": 8937, "d3": 12153, "d5": 16866, "dy2": 4468, "dy3": 4051, "dy5": 3373, "s2": 60.3, "s3": 59.0, "s5": 57.4, "id": 31}, {"src": "CarGurus.ca", "annee": 2021, "trim": "High Altitude 4WD", "cond": "Usagé", "km": 54996, "prix": 37832, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Mississauga (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 28502, "rv3": 25452, "rv5": 20984, "d2": 9330, "d3": 12380, "d5": 16848, "dy2": 4665, "dy3": 4126, "dy5": 3369, "s2": 59.4, "s3": 60.4, "s5": 61.2, "id": 32}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 50165, "prix": 37495, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 27924, "rv3": 24796, "rv5": 20218, "d2": 9571, "d3": 12699, "d5": 17277, "dy2": 4785, "dy3": 4233, "dy5": 3455, "s2": 58.9, "s3": 59.5, "s5": 60.0, "id": 33}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 57873, "prix": 38498, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29138, "rv3": 26078, "rv5": 21595, "d2": 9360, "d3": 12420, "d5": 16903, "dy2": 4680, "dy3": 4140, "dy5": 3380, "s2": 55.9, "s3": 56.8, "s5": 57.6, "id": 34}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 46596, "prix": 38888, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Longueuil", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29433, "rv3": 26342, "rv5": 21813, "d2": 9455, "d3": 12546, "d5": 17075, "dy2": 4727, "dy3": 4182, "dy5": 3415, "s2": 54.8, "s3": 55.5, "s5": 56.1, "id": 35}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 52995, "prix": 38219, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "Lévis (livraison)", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 28463, "rv3": 25275, "rv5": 20609, "d2": 9756, "d3": 12944, "d5": 17610, "dy2": 4878, "dy3": 4314, "dy5": 3522, "s2": 51.2, "s3": 51.4, "s5": 51.6, "id": 36}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 58330, "prix": 38995, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Sainte-Julie", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29514, "rv3": 26415, "rv5": 21873, "d2": 9481, "d3": 12580, "d5": 17122, "dy2": 4740, "dy3": 4193, "dy5": 3424, "s2": 50.3, "s3": 50.9, "s5": 51.6, "id": 37}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 55589, "prix": 38998, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29516, "rv3": 26417, "rv5": 21875, "d2": 9482, "d3": 12581, "d5": 17123, "dy2": 4741, "dy3": 4193, "dy5": 3424, "s2": 50.2, "s3": 50.9, "s5": 51.5, "id": 38}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 48501, "prix": 38695, "coul": "Green", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Overpriced", "vin": "", "rv2": 28817, "rv3": 25590, "rv5": 20865, "d2": 9878, "d3": 13105, "d5": 17830, "dy2": 4939, "dy3": 4368, "dy5": 3566, "s2": 49.0, "s3": 49.0, "s5": 48.9, "id": 39}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Sahara 4WD", "cond": "Usagé", "km": 56185, "prix": 37998, "coul": "Red", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Eustache", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27776, "rv3": 24443, "rv5": 19579, "d2": 10222, "d3": 13555, "d5": 18419, "dy2": 5111, "dy3": 4518, "dy5": 3683, "s2": 46.4, "s3": 45.8, "s5": 45.2, "id": 40}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "High Altitude 4WD", "cond": "Usagé", "km": 74364, "prix": 38489, "coul": "", "carb": "Hybride PHEV", "vendeur": "Hyundai Drummondville", "ville": "Drummondville", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 28132, "rv3": 24897, "rv5": 20166, "d2": 10357, "d3": 13592, "d5": 18323, "dy2": 5178, "dy3": 4530, "dy5": 3664, "s2": 36.8, "s3": 37.7, "s5": 38.6, "id": 41}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara 4WD", "cond": "Usagé", "km": 67168, "prix": 38222, "coul": "", "carb": "Hybride PHEV", "vendeur": "St-Jérôme Chrysler Jeep", "ville": "Mirabel", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 27611, "rv3": 24298, "rv5": 19462, "d2": 10611, "d3": 13924, "d5": 18760, "dy2": 5305, "dy3": 4641, "dy5": 3752, "s2": 34.5, "s3": 35.0, "s5": 35.6, "id": 42}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53344, "prix": 38995, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 28505, "rv3": 25084, "rv5": 20092, "d2": 10490, "d3": 13911, "d5": 18903, "dy2": 5245, "dy3": 4637, "dy5": 3780, "s2": 34.0, "s3": 32.6, "s5": 30.9, "id": 43}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 51504, "prix": 39700, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Vaudreuil-sur-le-lac", "prov": "QC", "deal": "Overpriced", "vin": "", "rv2": 29566, "rv3": 26254, "rv5": 21407, "d2": 10134, "d3": 13446, "d5": 18293, "dy2": 5067, "dy3": 4482, "dy5": 3658, "s2": 32.5, "s3": 31.9, "s5": 31.2, "id": 44}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53250, "prix": 39761, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Stouffville (livraison)", "prov": "ON", "deal": "Overpriced", "vin": "", "rv2": 29611, "rv3": 26295, "rv5": 21440, "d2": 10150, "d3": 13466, "d5": 18321, "dy2": 5075, "dy3": 4488, "dy5": 3664, "s2": 31.5, "s3": 30.9, "s5": 30.2, "id": 45}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 71113, "prix": 39995, "coul": "", "carb": "Hybride PHEV", "vendeur": "St-Jérôme Chevrolet Buick GMC", "ville": "St-Jérôme", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 29921, "rv3": 26779, "rv5": 22175, "d2": 10074, "d3": 13216, "d5": 17820, "dy2": 5037, "dy3": 4405, "dy5": 3564, "s2": 26.9, "s3": 28.3, "s5": 29.6, "id": 46}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara 4WD", "cond": "Usagé", "km": 68438, "prix": 39000, "coul": "", "carb": "Électrique", "vendeur": "Volkswagen de l'Estrie", "ville": "Sherbrooke", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 28173, "rv3": 24792, "rv5": 19859, "d2": 10827, "d3": 14208, "d5": 19141, "dy2": 5413, "dy3": 4736, "dy5": 3828, "s2": 22.4, "s3": 22.4, "s5": 22.4, "id": 47}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara High Altitude 4WD", "cond": "Usagé", "km": 61082, "prix": 39998, "coul": "", "carb": "Hybride PHEV", "vendeur": "Desmeules Chrysler", "ville": "Laval", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 29235, "rv3": 25873, "rv5": 20956, "d2": 10763, "d3": 14125, "d5": 19042, "dy2": 5381, "dy3": 4708, "dy5": 3808, "s2": 12.7, "s3": 12.9, "s5": 12.9, "id": 48}];</script>
+<script type="text/babel">
+const {useState,useMemo,useCallback} = React;
+const CURRENT_YEAR=2026;
+const BASE_DEPR={1:0.14,2:0.12,3:0.10,4:0.09,5:0.08};
+
+function annualRate(yr,km,trim){
+  let r=BASE_DEPR[yr]||0.075;
+  const tl=trim.toLowerCase();
+  if(tl.includes("rubicon"))r-=0.015;
+  else if(tl.includes("high altitude"))r-=0.005;
+  if(km>60000)r+=0.020; else if(km>40000)r+=0.010; else if(km<20000)r-=0.008;
+  return Math.max(r,0.05);
+}
+function forecastVal(prix,km,trim,years){
+  let val=prix,kp=km||5000;
+  for(let y=1;y<=years;y++){val*=(1-annualRate(y,kp,trim));kp+=15000;}
+  return Math.max(Math.round(val),Math.round(prix*0.20));
+}
+function computeScores(rows){
+  if(!rows.length)return[];
+  const prices=rows.map(r=>r.prix);
+  const mn=Math.min(...prices),mx=Math.max(...prices);
+  const wd=rows.map(r=>{
+    const rv2=forecastVal(r.prix,r.km,r.trim,2);
+    const rv3=forecastVal(r.prix,r.km,r.trim,3);
+    const rv5=forecastVal(r.prix,r.km,r.trim,5);
+    return{...r,rv2,rv3,rv5,dy2:(r.prix-rv2)/2,dy3:(r.prix-rv3)/3,dy5:(r.prix-rv5)/5};
+  });
+  const all2=wd.map(r=>r.dy2),all3=wd.map(r=>r.dy3),all5=wd.map(r=>r.dy5);
+  const mn2=Math.min(...all2),mx2=Math.max(...all2);
+  const mn3=Math.min(...all3),mx3=Math.max(...all3);
+  const mn5=Math.min(...all5),mx5=Math.max(...all5);
+  return wd.map(r=>{
+    const ps=mx===mn?50:Math.pow((mx-r.prix)/(mx-mn),0.75)*100;
+    const km=r.km;
+    const isRub=r.trim.toLowerCase().includes("rubicon");
+    let ks=km===0?85:km<20000?95:km<30000?88:km<40000?80:km<50000?70:km<60000?57:km<75000?42:km<90000?25:15;
+    if(isRub)ks=Math.min(100,ks+8);
+    const ds2=mx2===mn2?50:Math.pow((mx2-r.dy2)/(mx2-mn2),0.75)*100;
+    const ds3=mx3===mn3?50:Math.pow((mx3-r.dy3)/(mx3-mn3),0.75)*100;
+    const ds5=mx5===mn5?50:Math.pow((mx5-r.dy5)/(mx5-mn5),0.75)*100;
+    return{...r,
+      s2:Math.round((0.40*ps+0.25*ks+0.35*ds2)*10)/10,
+      s3:Math.round((0.40*ps+0.25*ks+0.35*ds3)*10)/10,
+      s5:Math.round((0.40*ps+0.25*ks+0.35*ds5)*10)/10};
+  });
+}
+function verdict(s){if(s>=80)return["🏆 Excellent","#16A34A"];if(s>=65)return["✅ Bon deal","#22C55E"];if(s>=50)return["👍 Correct","#CA8A04"];if(s>=35)return["⚠️ Passable","#EA580C"];return["❌ À éviter","#DC2626"];}
+function scoreColor(s){if(s>=80)return"#16A34A";if(s>=65)return"#22C55E";if(s>=50)return"#EAB308";if(s>=35)return"#F97316";return"#EF4444";}
+function fmt(n){return n?"$"+n.toLocaleString("fr-CA"):"—";}
+function dealColor(d){if(!d)return["#333","#666"];if(d.includes("Great"))return["#052E16","#4ADE80"];if(d.includes("Good"))return["#063B1E","#22C55E"];if(d.includes("Fair"))return["#1C1400","#EAB308"];if(d.includes("High")||d.includes("Over"))return["#3B0A0A","#F87171"];return["#1A1A1A","#666"];}
+function rowClass(r,idx){if(r.trim.toLowerCase().includes("rubicon"))return"row-rub";if(r.src==="CarGurus.ca")return idx%2===0?"row-cg-even":"row-cg-odd";return idx%2===0?"row-at-even":"row-at-odd";}
+
+function EditCell({value,type="text",options,onChange,className=""}){
+  if(options)return<select className={`editable ${className}`} value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>;
+  return<input className={`editable ${type==="number"?"num":""} ${className}`} type={type} value={value} onChange={e=>onChange(type==="number"?Number(e.target.value)||0:e.target.value)} min={type==="number"?0:undefined}/>;
+}
+function ScoreCell({score}){const color=scoreColor(score);return<div className="score-cell"><div className="score-bar-wrap"><div className="score-bar" style={{width:`${score}%`,background:color}}/></div><span className="score-num" style={{color}}>{score}</span></div>;}
+
+function App(){
+  const [rows,setRows]=useState(__DATA__);
+  const [sortBy,setSortBy]=useState("s2");
+  const [sortDir,setSortDir]=useState("desc");
+  const [filterSrc,setFilterSrc]=useState("Tous");
+  const [filterTrim,setFilterTrim]=useState("Tous");
+  const [filterProv,setFilterProv]=useState("Tous");
+  const [scoreMode,setScoreMode]=useState("s2");
+  const [showMethod,setShowMethod]=useState(false);
+  const [darkMode,setDarkMode]=useState(true);
+
+  React.useEffect(()=>{document.body.className=darkMode?'':'light-mode';},[darkMode]);
+
+  const scored=useMemo(()=>computeScores(rows),[rows]);
+  const trims=["Tous","Rubicon 4WD","Sahara 4WD","High Altitude 4WD","Sahara High Altitude 4WD"];
+  const provs=["Tous",...new Set(rows.map(r=>r.prov).filter(Boolean))].sort();
+
+  const filtered=useMemo(()=>{
+    let r=scored;
+    if(filterSrc!=="Tous")r=r.filter(x=>x.src===filterSrc);
+    if(filterTrim!=="Tous")r=r.filter(x=>x.trim.toLowerCase().includes(filterTrim.toLowerCase().split(" ")[0]));
+    if(filterProv!=="Tous")r=r.filter(x=>x.prov===filterProv);
+    return r;
+  },[scored,filterSrc,filterTrim,filterProv]);
+
+  const sorted=useMemo(()=>[...filtered].sort((a,b)=>{
+    if(a.isNew&&!b.isNew)return 1;if(!a.isNew&&b.isNew)return -1;
+    let va=a[sortBy],vb=b[sortBy];
+    if(typeof va==="string"){va=va.toLowerCase();vb=vb.toLowerCase();}
+    return va<vb?(sortDir==="asc"?-1:1):va>vb?(sortDir==="asc"?1:-1):0;
+  }),[filtered,sortBy,sortDir]);
+
+  const handleSort=col=>{if(sortBy===col)setSortDir(d=>d==="asc"?"desc":"asc");else{setSortBy(col);setSortDir("desc");}};
+  const updateRow=useCallback((id,field,val)=>setRows(prev=>prev.map(r=>r.id===id?{...r,[field]:val}:r)),[]);
+  const deleteRow=id=>setRows(prev=>prev.filter(r=>r.id!==id));
+  const addRow=()=>{
+    const newId=Date.now();
+    setRows(prev=>[...prev,{id:newId,src:"CarGurus.ca",annee:2022,trim:"Rubicon 4WD",cond:"Usagé",km:50000,prix:38000,coul:"",carb:"Hybride PHEV",vendeur:"",ville:"",prov:"QC",deal:"",isNew:true}]);
+    setTimeout(()=>{const trs=document.querySelectorAll("tbody tr");if(trs.length)trs[trs.length-1].scrollIntoView({behavior:"smooth",block:"center"});},150);
+  };
+
+  const allPrix=scored.map(r=>r.prix);
+  const Th=({col,children,cls=""})=>{const active=sortBy===col;const arrow=active?(sortDir==="asc"?"↑":"↓"):"↕";return<th className={`${cls} ${active?"sorted":""}`} onClick={()=>handleSort(col)}>{children} <span style={{opacity:active?1:0.4,color:active?"var(--acc)":"inherit"}}>{arrow}</span></th>;};
+
+  return<div>
+    <div className="sticky-top">
+    <div className="header">
+      <div style={{display:"flex",alignItems:"center",gap:14}}>
+        <div className="logo-badge">4XE</div>
+        <div><div className="header-title">JEEP WRANGLER 4XE — SCORING DYNAMIQUE</div>
+        <div className="header-sub">PHEV 375hp · Bonus Rubicon · Modifie les données → scores recalculés en temps réel</div></div>
+      </div>
+      <div className="header-stats">
+        <button className="toggle-btn" onClick={()=>setDarkMode(d=>!d)}>{darkMode?"☀️ Light":"🌙 Dark"}</button>
+        <div className="stat-pill"><div className="num">{rows.length}</div><div className="lbl">Annonces</div></div>
+        <div className="stat-pill"><div className="num">{fmt(Math.min(...allPrix))}</div><div className="lbl">Prix min</div></div>
+        <div className="stat-pill"><div className="num">{fmt(Math.round(allPrix.reduce((a,b)=>a+b,0)/allPrix.length))}</div><div className="lbl">Prix moy.</div></div>
+        <div className="stat-pill"><div className="num">{fmt(Math.max(...allPrix))}</div><div className="lbl">Prix max</div></div>
+      </div>
+    </div>
+    <div className="controls">
+      <div className="ctrl-group"><label>Source</label><select value={filterSrc} onChange={e=>setFilterSrc(e.target.value)}>{["Tous","CarGurus.ca","AutoTrader.ca"].map(o=><option key={o}>{o}</option>)}</select></div>
+      <div className="ctrl-group"><label>Trim</label><select value={filterTrim} onChange={e=>setFilterTrim(e.target.value)}>{trims.map(o=><option key={o}>{o}</option>)}</select></div>
+      <div className="ctrl-group"><label>Province</label><select value={filterProv} onChange={e=>setFilterProv(e.target.value)}>{provs.map(o=><option key={o}>{o}</option>)}</select></div>
+      <div className="sep"/>
+      <div className="ctrl-group"><label>Score</label><select value={scoreMode} onChange={e=>{setScoreMode(e.target.value);setSortBy(e.target.value);setSortDir("desc");}}><option value="s2">1-2 ans</option><option value="s3">2-3 ans</option><option value="s5">5+ ans</option></select></div>
+      <div className="sep"/>
+      <span style={{color:"var(--muted)",fontSize:11}}>Résultats: <strong style={{color:"var(--text)"}}>{sorted.length}</strong></span>
+      <button className="btn-add" onClick={addRow}>+ Ajouter</button>
+    </div>
+    <div className="legend">
+      <span style={{fontSize:11,color:"var(--muted)"}}>Score:</span>
+      {[["🏆 Excellent","#16A34A","80-100"],["✅ Bon deal","#22C55E","65-79"],["👍 Correct","#EAB308","50-64"],["⚠️ Passable","#F97316","35-49"],["❌ À éviter","#EF4444","0-34"]].map(([l,c,r])=>(
+        <div key={l} className="legend-item"><span className="score-badge-mini" style={{background:c}}>{l}</span><span>{r}</span></div>
+      ))}
+      <div className="sep"/>
+      <span className="rubicon-badge">🏅 RUBICON</span>
+      <span style={{fontSize:11,color:"var(--muted)"}}>= fond or + bonus +8pts KM + -1.5%/an dépréciation</span>
+    </div>
+    </div>{/* end sticky-top */}
+
+    <div className="table-wrap">
+      <table>
+        <thead><tr>
+          <th style={{width:36}}>Rang</th>
+          <Th col="src" cls="th-info">Source</Th>
+          <Th col="annee" cls="th-info">Année</Th>
+          <Th col="trim" cls="th-info">Trim</Th>
+          <Th col="cond" cls="th-info">Cond.</Th>
+          <Th col="km" cls="th-info">KM</Th>
+          <Th col="coul" cls="th-info">Couleur</Th>
+          <Th col="vendeur" cls="th-info">Vendeur</Th>
+          <Th col="ville" cls="th-info">Ville</Th>
+          <Th col="prov" cls="th-info">Prov.</Th>
+          <Th col="deal" cls="th-info">Deal CG</Th>
+          <Th col="prix" cls="th-price th-section-start">Prix ($)</Th>
+          <Th col="rv2" cls="th-rev th-section-start">🔮 2ans</Th>
+          <Th col="rv3" cls="th-rev">🔮 3ans</Th>
+          <Th col="rv5" cls="th-rev">🔮 5ans</Th>
+          <Th col="dy2" cls="th-depr th-section-start">💸/an 2ans</Th>
+          <Th col="dy3" cls="th-depr">💸/an 3ans</Th>
+          <Th col="dy5" cls="th-depr">💸/an 5ans</Th>
+          <Th col="s2" cls="th-score th-section-start">⭐ 1-2ans</Th>
+          <Th col="s3" cls="th-score">⭐ 2-3ans</Th>
+          <Th col="s5" cls="th-score">⭐ 5ans</Th>
+          <th className="th-score">Verdict</th>
+          <th style={{width:28}}></th>
+        </tr></thead>
+        <tbody>
+          {sorted.map((r,idx)=>{
+            const [vLabel,vColor]=verdict(r[scoreMode]);
+            const rank=idx+1;
+            const rc=rowClass(r,idx);
+            const isRub=r.trim.toLowerCase().includes("rubicon");
+            const [dbg,dfc]=dealColor(r.deal);
+            return<tr key={r.id} className={`${rc}${r.isNew?" new-row":""}`}>
+              <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
+              <td><EditCell value={r.src} options={["CarGurus.ca","AutoTrader.ca"]} onChange={v=>updateRow(r.id,"src",v)}/></td>
+              <td><EditCell value={r.annee} type="number" onChange={v=>updateRow(r.id,"annee",v)}/></td>
+              <td style={{minWidth:140}}>
+                <div style={{display:"flex",alignItems:"center",gap:5}}>
+                  {isRub&&<span className="rubicon-badge">RUB</span>}
+                  <EditCell value={r.trim} onChange={v=>updateRow(r.id,"trim",v)}/>
+                </div>
+              </td>
+              <td><EditCell value={r.cond} options={["Neuf","Usagé"]} onChange={v=>updateRow(r.id,"cond",v)}/></td>
+              <td><EditCell value={r.km} type="number" onChange={v=>updateRow(r.id,"km",v)}/></td>
+              <td><EditCell value={r.coul} onChange={v=>updateRow(r.id,"coul",v)}/></td>
+              <td style={{minWidth:140}}><EditCell value={r.vendeur} onChange={v=>updateRow(r.id,"vendeur",v)}/></td>
+              <td><EditCell value={r.ville} onChange={v=>updateRow(r.id,"ville",v)}/></td>
+              <td><EditCell value={r.prov} onChange={v=>updateRow(r.id,"prov",v)}/></td>
+              <td>{r.deal&&<span className="deal-badge" style={{background:dbg,color:dfc,border:`1px solid ${dfc}44`}}>{r.deal}</span>}</td>
+              <td className="td-section-start"><EditCell value={r.prix} type="number" onChange={v=>updateRow(r.id,"prix",v)} className="num"/></td>
+              <td className="td-section-start price-cell resale">{fmt(r.rv2)}</td>
+              <td className="price-cell resale">{fmt(r.rv3)}</td>
+              <td className="price-cell resale">{fmt(r.rv5)}</td>
+              <td className="td-section-start price-cell depr-ann">{fmt(Math.round(r.dy2))}/an</td>
+              <td className="price-cell depr-ann">{fmt(Math.round(r.dy3))}/an</td>
+              <td className="price-cell depr-ann">{fmt(Math.round(r.dy5))}/an</td>
+              <td className="td-section-start"><ScoreCell score={r.s2}/></td>
+              <td><ScoreCell score={r.s3}/></td>
+              <td><ScoreCell score={r.s5}/></td>
+              <td><span className="verdict" style={{background:vColor+"22",color:vColor,border:`1px solid ${vColor}44`}}>{vLabel}</span></td>
+              <td><button className="btn-del" onClick={()=>deleteRow(r.id)} title="Supprimer">✕</button></td>
+            </tr>;
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <div className="method-panel">
+      <button className="method-toggle" onClick={()=>setShowMethod(s=>!s)}>
+        <span>📋 Méthodologie — Jeep Wrangler 4xe (PHEV 375hp, bonus Rubicon)</span>
+        <span>{showMethod?"▲ Fermer":"▼ Voir le détail"}</span>
+      </button>
+      {showMethod&&<div className="method-body">
+        <div className="method-section"><h4>Score (0-100)</h4><ul>
+          <li><strong style={{color:"#60A5FA"}}>40%</strong> Prix dans l'échantillon</li>
+          <li><strong style={{color:"#4ADE80"}}>25%</strong> KM: &lt;20k=95 / 30k=88 / 40k=80 / 50k=70 / 60k=57 / 75k=42 / 90k+=15</li>
+          <li><strong style={{color:"#C084FC"}}>35%</strong> Dépréciation annuelle normalisée</li>
+          <li><strong style={{color:"#F59E0B"}}>Bonus Rubicon:</strong> +8pts KM + -1.5%/an dépréciation</li>
+        </ul></div>
+        <div className="method-section"><h4>Dépréciation 4xe</h4><ul>
+          <li>Taux: an1=14%, an2=12%, an3=10%, an4=9%, an5=8%</li>
+          <li>Rubicon: -1.5%/an (retient mieux sa valeur)</li>
+          <li>High Altitude: -0.5%/an</li>
+          <li>KM &gt;60k: +2%/an | &gt;40k: +1%/an | &lt;20k: -0.8%/an</li>
+          <li>Plancher: 20% du prix d'achat</li>
+        </ul></div>
+        <div className="method-section"><h4>Filtres disponibles</h4><ul>
+          <li>Par Source: CarGurus / AutoTrader</li>
+          <li>Par Trim: Rubicon / Sahara / High Altitude</li>
+          <li>Par Province: QC / ON</li>
+          <li>Trier par score 1-2 / 2-3 / 5+ ans</li>
+          <li>Rubicon = fond doré dans le tableau</li>
+        </ul></div>
+      </div>}
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
