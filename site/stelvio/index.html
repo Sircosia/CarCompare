@@ -15,6 +15,7 @@ body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;
 body.light-mode{--darker:#F8F8F8;--dark:#EBEBEB;--card:#FFFFFF;--card2:#F0F0F0;--border:#DDDDDD;--text:#1A1A1A;--muted:#666666;--green:#1A8A40;}
 .toggle-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;display:flex;align-items:center;gap:6px;}
 .toggle-btn:hover{border-color:var(--green);}
+tbody tr.new-row{outline:2px solid var(--green) !important;}
 .row-cg-odd{background:#0A130A;}.row-cg-even{background:#0D170D;}
 .row-at-odd{background:#080D18;}.row-at-even{background:#0A1020;}
 body.light-mode .row-cg-odd{background:#F0FAF0;}
@@ -196,6 +197,8 @@ function App(){
     return r;
   },[scored,filterSrc,filterProv]);
   const sorted=useMemo(()=>[...filtered].sort((a,b)=>{
+    if(a.isNew&&!b.isNew)return 1;
+    if(!a.isNew&&b.isNew)return -1;
     let va=a[sortBy],vb=b[sortBy];
     if(typeof va==="string"){va=va.toLowerCase();vb=vb.toLowerCase();}
     return va<vb?(sortDir==="asc"?-1:1):va>vb?(sortDir==="asc"?1:-1):0;
@@ -206,9 +209,8 @@ function App(){
   const deleteRow=id=>setRows(prev=>prev.filter(r=>r.id!==id));
   const addRow=()=>{
     const newId=Date.now();
-    setRows(prev=>[...prev,{id:newId,src:"CarGurus.ca",annee:2022,trim:"Quadrifoglio AWD",cond:"Usagé",km:50000,prix:55000,coul:"",carb:"Essence",vendeur:"",ville:"",prov:"QC",deal:""}]);
-    setSortBy("s2"); setSortDir("desc");
-    setTimeout(()=>{const rows=document.querySelectorAll("tbody tr");if(rows.length)rows[rows.length-1].scrollIntoView({behavior:"smooth",block:"center"});},100);
+    setRows(prev=>[...prev,{id:newId,src:"CarGurus.ca",annee:2022,trim:"Quadrifoglio AWD",cond:"Usagé",km:50000,prix:55000,coul:"",carb:"Essence",vendeur:"",ville:"",prov:"QC",deal:"",isNew:true}]);
+    setTimeout(()=>{const trs=document.querySelectorAll("tbody tr");if(trs.length)trs[trs.length-1].scrollIntoView({behavior:"smooth",block:"center"});},150);
   };
 
   React.useEffect(()=>{document.body.className=darkMode?'':'light-mode';},[darkMode]);
@@ -296,7 +298,7 @@ function App(){
             const rank=idx+1;
             const rf=r.src==="CarGurus.ca"?(idx%2===0?"row-cg-even":"row-cg-odd"):(idx%2===0?"row-at-even":"row-at-odd");
             const [dbg,dfc]=dealColor(r.deal);
-            return<tr key={r.id} className={rf}>
+            return<tr key={r.id} className={`${rf}${r.isNew?" new-row":""}`}>
               <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
               <td><EditCell value={r.src} options={["CarGurus.ca","AutoTrader.ca"]} onChange={v=>updateRow(r.id,"src",v)}/></td>
               <td><EditCell value={r.annee} type="number" onChange={v=>updateRow(r.id,"annee",v)}/></td>

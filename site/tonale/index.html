@@ -553,6 +553,9 @@ function App() {
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a,b) => {
+      // New rows always go to the bottom
+      if (a.isNew && !b.isNew) return 1;
+      if (!a.isNew && b.isNew) return -1;
       let va = a[sortBy], vb = b[sortBy];
       if (typeof va === "string") va = va.toLowerCase();
       if (typeof vb === "string") vb = vb.toLowerCase();
@@ -578,14 +581,12 @@ function App() {
     setRows(prev => [...prev, {
       id: newId, src:"CarGurus", annee:2024, trim:"Veloce eAWD",
       cond:"Usagé", km:0, prix:35000, coul:"", carb:"Hybride PHEV",
-      vendeur:"", ville:"", prov:"QC"
+      vendeur:"", ville:"", prov:"QC", isNew:true
     }]);
-    setSortBy("s2");
-    setSortDir("desc");
     setTimeout(() => {
-      const rows = document.querySelectorAll("tbody tr");
-      if(rows.length) rows[rows.length-1].scrollIntoView({behavior:"smooth", block:"center"});
-    }, 100);
+      const trs = document.querySelectorAll("tbody tr");
+      if(trs.length) trs[trs.length-1].scrollIntoView({behavior:"smooth", block:"center"});
+    }, 150);
   };
 
   React.useEffect(() => {
@@ -708,7 +709,7 @@ function App() {
               const [vLabel, vColor] = verdict(r[scoreMode]);
               const rank = idx+1;
               return (
-                <tr key={r.id}>
+                <tr key={r.id} className={r.isNew?"new-row":""}>
                   <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
                   <td>
                     <EditCell value={r.src} options={["CarGurus","AutoTrader"]} onChange={v=>updateRow(r.id,"src",v)} />
