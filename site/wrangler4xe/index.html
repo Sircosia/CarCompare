@@ -3,337 +3,797 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jeep Wrangler 4xe — Scoring</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Notre Aventure en Guadeloupe !</title>
 <style>
-:root{--acc:#5A8A1E;--dark:#0A0F06;--darker:#060906;--card:#111A08;--card2:#162010;--border:#1E2E12;--text:#E8F0D8;--muted:#6A8A4A;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;transition:background 0.3s,color 0.3s;}
-body.light-mode{--darker:#F5F7F0;--dark:#E8ECE0;--card:#FFFFFF;--card2:#F0F4E8;--border:#D0D8C0;--text:#1A2010;--muted:#5A7A3A;--acc:#4A7A10;}
-.sticky-top{position:sticky;top:0;z-index:100;}
-.header{background:linear-gradient(135deg,#050A02 0%,#1A2A08 50%,#050A02 100%);border-bottom:3px solid var(--acc);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;}
-body.light-mode .header{background:linear-gradient(135deg,#2A3A10 0%,#3D5A1E 50%,#2A3A10 100%);}
-.logo-badge{background:var(--acc);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;padding:6px 14px;letter-spacing:2px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
-.header-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;color:#fff;}
-.header-sub{color:#8AAA6A;font-size:11px;margin-top:2px;}
-.header-stats{display:flex;gap:12px;align-items:center;}
-.stat-pill{text-align:center;background:var(--card);border:1px solid var(--border);padding:5px 12px;border-radius:4px;}
-.stat-pill .num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:var(--acc);}
-.stat-pill .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.toggle-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;display:flex;align-items:center;gap:5px;transition:all 0.2s;}
-.toggle-btn:hover{border-color:var(--acc);}
-.controls{padding:10px 28px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-body.light-mode .controls{background:#F0F4E8;}
-.controls label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.controls select{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:5px 10px;font-size:12px;font-family:'Barlow',sans-serif;border-radius:3px;outline:none;cursor:pointer;}
-.controls select:focus{border-color:var(--acc);}
-.ctrl-group{display:flex;align-items:center;gap:8px;}
-.sep{width:1px;height:24px;background:var(--border);}
-.btn-add{background:var(--acc);color:#fff;border:none;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;border-radius:3px;}
-.legend{padding:7px 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--darker);border-bottom:1px solid var(--border);}
-body.light-mode .legend{background:#E8ECE0;}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
-.score-badge-mini{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;color:#fff;}
-.rubicon-badge{background:#8B6914;color:#FEF9E7;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;letter-spacing:0.5px;}
-.table-wrap{overflow-x:auto;padding-bottom:40px;}
-table{width:100%;border-collapse:collapse;}
-thead tr{background:var(--dark);position:sticky;top:0;z-index:50;}
-body.light-mode thead tr{background:#D0D8C0;}
-th{padding:9px 8px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
-th:hover{color:var(--text);}th.sorted{color:var(--acc);}
-th.th-info{color:#6A8A4A;}th.th-price{color:#3B82F6;}th.th-rev{color:#22C55E;}th.th-depr{color:#F97316;}th.th-score{color:#A855F7;}
-tbody tr{border-bottom:1px solid #111A08;}
-body.light-mode tbody tr{border-bottom:1px solid #D0D8C0;}
-tbody tr:hover{background:rgba(90,138,30,0.06);}
-td{padding:7px 8px;vertical-align:middle;font-size:12px;color:var(--text);white-space:nowrap;}
-td.rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:17px;color:#2A3A10;text-align:center;width:36px;}
-td.rank.top3{color:var(--acc);}
-body.light-mode td{color:#1A2010;}
-.editable{background:transparent;border:1px solid transparent;color:var(--text);font-size:12px;font-family:'Barlow',sans-serif;padding:3px 5px;border-radius:3px;width:100%;outline:none;transition:border-color 0.15s,background 0.15s;}
-.editable:hover{border-color:var(--border);background:var(--card2);}
-.editable:focus{border-color:var(--acc);background:var(--card2);}
-.editable.num{text-align:right;width:80px;}
-select.editable{cursor:pointer;appearance:none;padding-right:18px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center;}
-body.light-mode .editable{color:#1A2010;}
-.price-cell{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;}
-.price-cell.resale{color:#22C55E;}.price-cell.depr-ann{color:#F59E0B;font-size:12px;}
-.score-cell{display:flex;align-items:center;gap:5px;min-width:95px;}
-.score-bar-wrap{flex:1;height:4px;background:#1E2E12;border-radius:3px;overflow:hidden;}
-body.light-mode .score-bar-wrap{background:#C0C8B0;}
-.score-bar{height:100%;border-radius:3px;transition:width 0.4s ease;}
-.score-num{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;min-width:28px;text-align:right;}
-.verdict{font-size:11px;font-weight:600;padding:2px 7px;border-radius:3px;white-space:nowrap;}
-.btn-del{background:none;border:1px solid #1E2E12;color:#3A4A2A;width:20px;height:20px;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;}
-.btn-del:hover{border-color:var(--acc);color:var(--acc);}
-.th-section-start{border-left:2px solid #1E2E12;}td.td-section-start{border-left:1px solid #1A2A0A;}
-.deal-badge{font-size:10px;font-weight:600;padding:2px 5px;border-radius:2px;}
-tbody tr.new-row{outline:2px solid var(--acc) !important;}
-/* Row colors */
-.row-cg-odd{background:#0D1A07;}.row-cg-even{background:#111E0A;}
-.row-at-odd{background:#080D18;}.row-at-even{background:#0A1020;}
-.row-rub{background:#1A1500;}
-body.light-mode .row-cg-odd{background:#F0F5E8;}
-body.light-mode .row-cg-even{background:#E4EDD8;}
-body.light-mode .row-at-odd{background:#EBF5FB;}
-body.light-mode .row-at-even{background:#D6EAF8;}
-body.light-mode .row-rub{background:#FEF9E7;}
-body.light-mode .price-cell.resale{color:#16A34A;}
-body.light-mode .price-cell.depr-ann{color:#D68910;}
-.method-panel{margin:0 28px 40px;background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-.method-toggle{padding:11px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border:none;background:none;width:100%;text-align:left;}
-.method-body{padding:18px;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;}
-.method-section h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--acc);margin-bottom:8px;}
-.method-section li{font-size:12px;color:var(--muted);line-height:1.7;}
-.method-section ul{padding-left:16px;}
-::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:var(--darker);}::-webkit-scrollbar-thumb{background:#1E2E12;border-radius:3px;}
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #1a6b8a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at top, #1a4a6b 0%, #1a6b8a 60%, #0d4a5e 100%);
+  }
+
+  .wave-top {
+    position: fixed; top: 0; left: 0; width: 100%; height: 8px;
+    background: repeating-linear-gradient(90deg, #f6d55c 0px, #f6d55c 20px, #ff6b6b 20px, #ff6b6b 40px, #4ecdc4 40px, #4ecdc4 60px);
+    z-index: 100;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 16px 16px 40px;
+  }
+
+  .header {
+    text-align: center; padding: 24px 0 16px;
+  }
+
+  .header h1 {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    color: #f6d55c;
+    text-shadow: 3px 3px 0 #c4933a, 0 0 40px rgba(246,213,92,0.3);
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+
+  .header .sub {
+    font-size: 15px; color: #a8dce8; margin-top: 6px; font-weight: 600;
+  }
+
+  .palm-row {
+    display: flex; justify-content: center; gap: 24px; margin: 8px 0 16px;
+    font-size: 28px;
+  }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  @media (max-width: 680px) {
+    .main-layout { grid-template-columns: 1fr; }
+  }
+
+  /* ── DAY SELECTOR ── */
+  .day-panel {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 14px 12px;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .day-panel h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 15px; font-weight: 800;
+    color: #f6d55c; text-align: center;
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  .day-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 8px 10px;
+    margin-bottom: 4px;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #e0f4f8;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 600;
+    text-align: left;
+  }
+
+  .day-btn:hover { background: rgba(255,255,255,0.18); transform: translateX(3px); }
+
+  .day-btn.active {
+    background: #f6d55c;
+    border-color: #c4933a;
+    color: #3a2800;
+    transform: translateX(5px);
+  }
+
+  .day-btn .day-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; flex-shrink: 0;
+  }
+
+  .day-btn.active .day-num { background: #c4933a; color: #fff; }
+
+  .day-btn .day-icon { font-size: 16px; flex-shrink: 0; }
+
+  .day-btn .day-label { line-height: 1.2; }
+  .day-btn .day-date { font-size: 10px; opacity: 0.7; display: block; }
+
+  /* ── MAP + INFO AREA ── */
+  .right-col { display: flex; flex-direction: column; gap: 14px; }
+
+  .map-container {
+    background: rgba(255,255,255,0.1);
+    border-radius: 24px;
+    border: 2px solid rgba(255,255,255,0.25);
+    padding: 12px;
+    position: relative;
+  }
+
+  .map-wrap { position: relative; }
+
+  #map-svg { width: 100%; height: auto; display: block; border-radius: 16px; }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 18px 20px;
+    border: 3px solid #f6d55c;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: repeating-linear-gradient(90deg, #f6d55c 0px, #f6d55c 15px, #ff6b6b 15px, #ff6b6b 30px, #4ecdc4 30px, #4ecdc4 45px);
+  }
+
+  .info-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-top: 4px;
+  }
+
+  .info-icon {
+    font-size: 36px; flex-shrink: 0;
+  }
+
+  .info-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 22px; font-weight: 800;
+    color: #1a4a6b; line-height: 1.1;
+  }
+
+  .info-date {
+    font-size: 12px; color: #888; font-weight: 600; margin-top: 2px;
+  }
+
+  .info-zone-badge {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    margin-bottom: 12px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  .activities-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 500px) { .activities-grid { grid-template-columns: 1fr; } }
+
+  .activity-block {
+    border-radius: 12px; padding: 10px 12px;
+    border: 2px solid transparent;
+  }
+
+  .activity-block.morning { background: #fff8e1; border-color: #f6d55c; }
+  .activity-block.afternoon { background: #e0f7fa; border-color: #4ecdc4; }
+
+  .activity-block .act-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.8px; margin-bottom: 4px;
+  }
+
+  .activity-block.morning .act-label { color: #c4933a; }
+  .activity-block.afternoon .act-label { color: #0097a7; }
+
+  .activity-block .act-text {
+    font-size: 13px; font-weight: 600; color: #2a2a2a; line-height: 1.4;
+  }
+
+  .fun-fact {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border-left: 4px solid #66bb6a;
+    border-radius: 0 12px 12px 0;
+    padding: 10px 14px;
+    font-size: 13px; color: #2e7d32;
+    font-weight: 600; line-height: 1.5;
+  }
+
+  .fun-fact .fact-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
+    font-weight: 800; margin-bottom: 4px; color: #388e3c;
+  }
+
+  .transport-row {
+    display: flex; align-items: center; gap: 8px;
+    background: #f0f4ff; border-radius: 10px; padding: 8px 12px;
+    margin-top: 8px; font-size: 12px; color: #3949ab; font-weight: 600;
+  }
+
+  /* ── MAP MARKERS ── */
+  .marker { cursor: pointer; transition: transform 0.2s; }
+  .marker:hover { transform: scale(1.2); }
+  .marker.active-day { animation: bounce 0.6s ease; }
+
+  @keyframes bounce {
+    0%,100% { transform: translateY(0) scale(1.2); }
+    50% { transform: translateY(-8px) scale(1.3); }
+  }
+
+  @keyframes fadein { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  .info-card { animation: fadein 0.3s ease; }
+
+  /* pulse ring on active marker */
+  .pulse-ring {
+    animation: pulse-anim 1.5s ease-out infinite;
+    transform-origin: center;
+  }
+  @keyframes pulse-anim {
+    0% { r: 10; opacity: 0.8; }
+    100% { r: 22; opacity: 0; }
+  }
+
+  /* Path animation */
+  .route-path {
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    animation: draw-path 1.2s ease forwards;
+  }
+  @keyframes draw-path {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .welcome-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px; padding: 20px 24px;
+    border: 3px solid #4ecdc4;
+    text-align: center;
+  }
+
+  .welcome-card h3 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 22px; color: #1a4a6b; margin-bottom: 8px;
+  }
+
+  .welcome-card p { font-size: 14px; color: #555; line-height: 1.6; }
+
+  .stats-row {
+    display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    background: #1a4a6b; color: #f6d55c;
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 13px; font-weight: 700;
+    font-family: 'Baloo 2', cursive;
+  }
+
+  .legend {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    margin-top: 10px;
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 600;
+  }
+
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script>const __DATA__=[{"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 35234, "prix": 34999, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Longueuil", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 26672, "rv3": 23685, "rv5": 19312, "d2": 8327, "d3": 11314, "d5": 15687, "dy2": 4163, "dy3": 3771, "dy5": 3137, "s2": 95.0, "s3": 94.9, "s5": 94.8, "id": 1}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 34527, "prix": 35498, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 27053, "rv3": 24023, "rv5": 19588, "d2": 8445, "d3": 11475, "d5": 15910, "dy2": 4222, "dy3": 3825, "dy5": 3182, "s2": 90.7, "s3": 90.4, "s5": 90.1, "id": 2}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 43284, "prix": 34998, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26364, "rv3": 23411, "rv5": 19089, "d2": 8634, "d3": 11587, "d5": 15909, "dy2": 4317, "dy3": 3862, "dy5": 3181, "s2": 89.2, "s3": 89.9, "s5": 90.6, "id": 3}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 41304, "prix": 34998, "coul": "Red (Burgundy)", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26364, "rv3": 23411, "rv5": 19089, "d2": 8634, "d3": 11587, "d5": 15909, "dy2": 4317, "dy3": 3862, "dy5": 3181, "s2": 89.2, "s3": 89.9, "s5": 90.6, "id": 4}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 35013, "prix": 35998, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27434, "rv3": 24361, "rv5": 19864, "d2": 8564, "d3": 11637, "d5": 16134, "dy2": 4282, "dy3": 3879, "dy5": 3226, "s2": 86.3, "s3": 85.8, "s5": 85.2, "id": 5}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 42645, "prix": 35495, "coul": "Sarge Green", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Jérôme", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 26739, "rv3": 23744, "rv5": 19360, "d2": 8756, "d3": 11751, "d5": 16135, "dy2": 4378, "dy3": 3917, "dy5": 3227, "s2": 84.8, "s3": 85.3, "s5": 85.9, "id": 6}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 54153, "prix": 34997, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Montréal", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 26063, "rv3": 23144, "rv5": 18871, "d2": 8934, "d3": 11853, "d5": 16126, "dy2": 4467, "dy3": 3951, "dy5": 3225, "s2": 82.7, "s3": 84.2, "s5": 85.7, "id": 7}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 59309, "prix": 34998, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26064, "rv3": 23145, "rv5": 18872, "d2": 8934, "d3": 11853, "d5": 16126, "dy2": 4467, "dy3": 3951, "dy5": 3225, "s2": 82.7, "s3": 84.2, "s5": 85.7, "id": 8}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 19848, "prix": 37498, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Eustache", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 29169, "rv3": 26193, "rv5": 21358, "d2": 8329, "d3": 11305, "d5": 16140, "dy2": 4164, "dy3": 3768, "dy5": 3228, "s2": 82.5, "s3": 82.5, "s5": 78.9, "id": 9}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 38718, "prix": 36498, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "", "ville": "Vaudreuil-Dorion", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27815, "rv3": 24699, "rv5": 20139, "d2": 8683, "d3": 11799, "d5": 16359, "dy2": 4341, "dy3": 3933, "dy5": 3271, "s2": 81.8, "s3": 81.0, "s5": 80.2, "id": 10}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 44608, "prix": 35900, "coul": "", "carb": "Hybride PHEV", "vendeur": "", "ville": "Sainte-Rose", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27044, "rv3": 24015, "rv5": 19581, "d2": 8856, "d3": 11885, "d5": 16319, "dy2": 4428, "dy3": 3961, "dy5": 3263, "s2": 81.2, "s3": 81.5, "s5": 81.9, "id": 11}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 45156, "prix": 35650, "coul": "Red", "carb": "Hybride PHEV", "vendeur": "", "ville": "Laval", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26550, "rv3": 23576, "rv5": 19223, "d2": 9100, "d3": 12074, "d5": 16427, "dy2": 4550, "dy3": 4024, "dy5": 3285, "s2": 80.0, "s3": 81.3, "s5": 82.6, "id": 12}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 32184, "prix": 36995, "coul": "Purple", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville Signature", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 28194, "rv3": 25036, "rv5": 20414, "d2": 8801, "d3": 11959, "d5": 16581, "dy2": 4400, "dy3": 3986, "dy5": 3316, "s2": 77.2, "s3": 76.2, "s5": 75.1, "id": 13}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 37965, "prix": 37336, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Concord (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 28453, "rv3": 25267, "rv5": 20602, "d2": 8883, "d3": 12069, "d5": 16734, "dy2": 4441, "dy3": 4023, "dy5": 3346, "s2": 73.9, "s3": 72.7, "s5": 71.5, "id": 14}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 50292, "prix": 35998, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "St-Leonard", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26809, "rv3": 23806, "rv5": 19411, "d2": 9189, "d3": 12192, "d5": 16587, "dy2": 4594, "dy3": 4064, "dy5": 3317, "s2": 73.6, "s3": 74.7, "s5": 75.9, "id": 15}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 59636, "prix": 35995, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26807, "rv3": 23804, "rv5": 19409, "d2": 9188, "d3": 12191, "d5": 16586, "dy2": 4594, "dy3": 4063, "dy5": 3317, "s2": 73.6, "s3": 74.7, "s5": 75.9, "id": 16}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53141, "prix": 35990, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Repentigny", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 26803, "rv3": 23801, "rv5": 19407, "d2": 9187, "d3": 12189, "d5": 16583, "dy2": 4593, "dy3": 4063, "dy5": 3316, "s2": 73.6, "s3": 74.8, "s5": 76.0, "id": 17}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 56527, "prix": 36056, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Concord (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 26852, "rv3": 23845, "rv5": 19442, "d2": 9204, "d3": 12211, "d5": 16614, "dy2": 4602, "dy3": 4070, "dy5": 3322, "s2": 73.0, "s3": 74.1, "s5": 75.3, "id": 18}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 48500, "prix": 36500, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Richmond Hill (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 27183, "rv3": 24138, "rv5": 19682, "d2": 9317, "d3": 12362, "d5": 16818, "dy2": 4658, "dy3": 4120, "dy5": 3363, "s2": 72.1, "s3": 73.0, "s5": 74.0, "id": 19}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 58716, "prix": 37000, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Mirabel", "prov": "QC", "deal": "Great Deal", "vin": "", "rv2": 28004, "rv3": 25063, "rv5": 20754, "d2": 8996, "d3": 11937, "d5": 16246, "dy2": 4498, "dy3": 3979, "dy5": 3249, "s2": 71.2, "s3": 72.6, "s5": 74.0, "id": 20}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 42816, "prix": 36995, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "Salaberry-de-Valleyfield", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27869, "rv3": 24747, "rv5": 20179, "d2": 9126, "d3": 12248, "d5": 16816, "dy2": 4563, "dy3": 4082, "dy5": 3363, "s2": 71.0, "s3": 70.9, "s5": 70.7, "id": 21}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53817, "prix": 36495, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27179, "rv3": 24135, "rv5": 19679, "d2": 9316, "d3": 12360, "d5": 16816, "dy2": 4658, "dy3": 4120, "dy5": 3363, "s2": 68.8, "s3": 69.8, "s5": 70.8, "id": 22}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 55095, "prix": 37895, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29211, "rv3": 26378, "rv5": 22228, "d2": 8684, "d3": 11517, "d5": 15667, "dy2": 4342, "dy3": 3839, "dy5": 3133, "s2": 68.3, "s3": 70.2, "s5": 72.1, "id": 23}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 51351, "prix": 37998, "coul": "Silver", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Eustache", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29291, "rv3": 26449, "rv5": 22289, "d2": 8707, "d3": 11549, "d5": 15709, "dy2": 4353, "dy3": 3849, "dy5": 3141, "s2": 67.3, "s3": 69.1, "s5": 71.1, "id": 24}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara 4WD", "cond": "Usagé", "km": 87872, "prix": 34995, "coul": "", "carb": "Hybride PHEV", "vendeur": "Boucherville Chrysler", "ville": "Boucherville", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 25280, "rv3": 22246, "rv5": 17819, "d2": 9715, "d3": 12749, "d5": 17176, "dy2": 4857, "dy3": 4249, "dy5": 3435, "s2": 65.3, "s3": 67.1, "s5": 69.1, "id": 25}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 55908, "prix": 36995, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 27551, "rv3": 24466, "rv5": 19949, "d2": 9444, "d3": 12529, "d5": 17046, "dy2": 4722, "dy3": 4176, "dy5": 3409, "s2": 64.0, "s3": 64.7, "s5": 65.5, "id": 26}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 50756, "prix": 36995, "coul": "White", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 27551, "rv3": 24466, "rv5": 19949, "d2": 9444, "d3": 12529, "d5": 17046, "dy2": 4722, "dy3": 4176, "dy5": 3409, "s2": 64.0, "s3": 64.7, "s5": 65.5, "id": 27}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 44470, "prix": 38995, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Salaberry-de-Valleyfield", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 30400, "rv3": 27451, "rv5": 23133, "d2": 8595, "d3": 11544, "d5": 15862, "dy2": 4297, "dy3": 3848, "dy5": 3172, "s2": 63.6, "s3": 64.3, "s5": 65.0, "id": 28}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 38674, "prix": 38495, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 29337, "rv3": 26051, "rv5": 21241, "d2": 9158, "d3": 12444, "d5": 17254, "dy2": 4579, "dy3": 4148, "dy5": 3450, "s2": 62.1, "s3": 60.3, "s5": 58.4, "id": 29}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 37355, "prix": 38500, "coul": "Red", "carb": "Hybride PHEV", "vendeur": "", "ville": "Richmond Hill (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 29341, "rv3": 26054, "rv5": 21244, "d2": 9159, "d3": 12446, "d5": 17256, "dy2": 4579, "dy3": 4148, "dy5": 3451, "s2": 62.0, "s3": 60.3, "s5": 58.3, "id": 30}, {"src": "CarGurus.ca", "annee": 2021, "trim": "High Altitude 4WD", "cond": "Usagé", "km": 39369, "prix": 38998, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 30061, "rv3": 26845, "rv5": 22132, "d2": 8937, "d3": 12153, "d5": 16866, "dy2": 4468, "dy3": 4051, "dy5": 3373, "s2": 60.3, "s3": 59.0, "s5": 57.4, "id": 31}, {"src": "CarGurus.ca", "annee": 2021, "trim": "High Altitude 4WD", "cond": "Usagé", "km": 54996, "prix": 37832, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Mississauga (livraison)", "prov": "ON", "deal": "Fair Deal", "vin": "", "rv2": 28502, "rv3": 25452, "rv5": 20984, "d2": 9330, "d3": 12380, "d5": 16848, "dy2": 4665, "dy3": 4126, "dy5": 3369, "s2": 59.4, "s3": 60.4, "s5": 61.2, "id": 32}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 50165, "prix": 37495, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 27924, "rv3": 24796, "rv5": 20218, "d2": 9571, "d3": 12699, "d5": 17277, "dy2": 4785, "dy3": 4233, "dy5": 3455, "s2": 58.9, "s3": 59.5, "s5": 60.0, "id": 33}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 57873, "prix": 38498, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29138, "rv3": 26078, "rv5": 21595, "d2": 9360, "d3": 12420, "d5": 16903, "dy2": 4680, "dy3": 4140, "dy5": 3380, "s2": 55.9, "s3": 56.8, "s5": 57.6, "id": 34}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 46596, "prix": 38888, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Longueuil", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29433, "rv3": 26342, "rv5": 21813, "d2": 9455, "d3": 12546, "d5": 17075, "dy2": 4727, "dy3": 4182, "dy5": 3415, "s2": 54.8, "s3": 55.5, "s5": 56.1, "id": 35}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 52995, "prix": 38219, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "Lévis (livraison)", "prov": "QC", "deal": "High Priced", "vin": "", "rv2": 28463, "rv3": 25275, "rv5": 20609, "d2": 9756, "d3": 12944, "d5": 17610, "dy2": 4878, "dy3": 4314, "dy5": 3522, "s2": 51.2, "s3": 51.4, "s5": 51.6, "id": 36}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 58330, "prix": 38995, "coul": "Black", "carb": "Hybride PHEV", "vendeur": "", "ville": "Sainte-Julie", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29514, "rv3": 26415, "rv5": 21873, "d2": 9481, "d3": 12580, "d5": 17122, "dy2": 4740, "dy3": 4193, "dy5": 3424, "s2": 50.3, "s3": 50.9, "s5": 51.6, "id": 37}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 55589, "prix": 38998, "coul": "White", "carb": "Hybride PHEV", "vendeur": "", "ville": "Carignan", "prov": "QC", "deal": "Good Deal", "vin": "", "rv2": 29516, "rv3": 26417, "rv5": 21875, "d2": 9482, "d3": 12581, "d5": 17123, "dy2": 4741, "dy3": 4193, "dy5": 3424, "s2": 50.2, "s3": 50.9, "s5": 51.5, "id": 38}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 48501, "prix": 38695, "coul": "Green", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Overpriced", "vin": "", "rv2": 28817, "rv3": 25590, "rv5": 20865, "d2": 9878, "d3": 13105, "d5": 17830, "dy2": 4939, "dy3": 4368, "dy5": 3566, "s2": 49.0, "s3": 49.0, "s5": 48.9, "id": 39}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Sahara 4WD", "cond": "Usagé", "km": 56185, "prix": 37998, "coul": "Red", "carb": "Hybride PHEV", "vendeur": "", "ville": "Saint-Eustache", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 27776, "rv3": 24443, "rv5": 19579, "d2": 10222, "d3": 13555, "d5": 18419, "dy2": 5111, "dy3": 4518, "dy5": 3683, "s2": 46.4, "s3": 45.8, "s5": 45.2, "id": 40}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "High Altitude 4WD", "cond": "Usagé", "km": 74364, "prix": 38489, "coul": "", "carb": "Hybride PHEV", "vendeur": "Hyundai Drummondville", "ville": "Drummondville", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 28132, "rv3": 24897, "rv5": 20166, "d2": 10357, "d3": 13592, "d5": 18323, "dy2": 5178, "dy3": 4530, "dy5": 3664, "s2": 36.8, "s3": 37.7, "s5": 38.6, "id": 41}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara 4WD", "cond": "Usagé", "km": 67168, "prix": 38222, "coul": "", "carb": "Hybride PHEV", "vendeur": "St-Jérôme Chrysler Jeep", "ville": "Mirabel", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 27611, "rv3": 24298, "rv5": 19462, "d2": 10611, "d3": 13924, "d5": 18760, "dy2": 5305, "dy3": 4641, "dy5": 3752, "s2": 34.5, "s3": 35.0, "s5": 35.6, "id": 42}, {"src": "CarGurus.ca", "annee": 2022, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53344, "prix": 38995, "coul": "Black (Charcoal)", "carb": "Hybride PHEV", "vendeur": "HGregoire Blainville", "ville": "Blainville", "prov": "QC", "deal": "Fair Deal", "vin": "", "rv2": 28505, "rv3": 25084, "rv5": 20092, "d2": 10490, "d3": 13911, "d5": 18903, "dy2": 5245, "dy3": 4637, "dy5": 3780, "s2": 34.0, "s3": 32.6, "s5": 30.9, "id": 43}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 51504, "prix": 39700, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Vaudreuil-sur-le-lac", "prov": "QC", "deal": "Overpriced", "vin": "", "rv2": 29566, "rv3": 26254, "rv5": 21407, "d2": 10134, "d3": 13446, "d5": 18293, "dy2": 5067, "dy3": 4482, "dy5": 3658, "s2": 32.5, "s3": 31.9, "s5": 31.2, "id": 44}, {"src": "CarGurus.ca", "annee": 2021, "trim": "Sahara 4WD", "cond": "Usagé", "km": 53250, "prix": 39761, "coul": "Gray", "carb": "Hybride PHEV", "vendeur": "", "ville": "Stouffville (livraison)", "prov": "ON", "deal": "Overpriced", "vin": "", "rv2": 29611, "rv3": 26295, "rv5": 21440, "d2": 10150, "d3": 13466, "d5": 18321, "dy2": 5075, "dy3": 4488, "dy5": 3664, "s2": 31.5, "s3": 30.9, "s5": 30.2, "id": 45}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Rubicon 4WD", "cond": "Usagé", "km": 71113, "prix": 39995, "coul": "", "carb": "Hybride PHEV", "vendeur": "St-Jérôme Chevrolet Buick GMC", "ville": "St-Jérôme", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 29921, "rv3": 26779, "rv5": 22175, "d2": 10074, "d3": 13216, "d5": 17820, "dy2": 5037, "dy3": 4405, "dy5": 3564, "s2": 26.9, "s3": 28.3, "s5": 29.6, "id": 46}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara 4WD", "cond": "Usagé", "km": 68438, "prix": 39000, "coul": "", "carb": "Électrique", "vendeur": "Volkswagen de l'Estrie", "ville": "Sherbrooke", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 28173, "rv3": 24792, "rv5": 19859, "d2": 10827, "d3": 14208, "d5": 19141, "dy2": 5413, "dy3": 4736, "dy5": 3828, "s2": 22.4, "s3": 22.4, "s5": 22.4, "id": 47}, {"src": "AutoTrader.ca", "annee": 2023, "trim": "Sahara High Altitude 4WD", "cond": "Usagé", "km": 61082, "prix": 39998, "coul": "", "carb": "Hybride PHEV", "vendeur": "Desmeules Chrysler", "ville": "Laval", "prov": "QC", "deal": "Great price", "vin": "", "rv2": 29235, "rv3": 25873, "rv5": 20956, "d2": 10763, "d3": 14125, "d5": 19042, "dy2": 5381, "dy3": 4708, "dy5": 3808, "s2": 12.7, "s3": 12.9, "s5": 12.9, "id": 48}];</script>
-<script type="text/babel">
-const {useState,useMemo,useCallback} = React;
-const CURRENT_YEAR=2026;
-const BASE_DEPR={1:0.14,2:0.12,3:0.10,4:0.09,5:0.08};
+<div class="wave-top"></div>
+<div class="stars"></div>
 
-function annualRate(yr,km,trim){
-  let r=BASE_DEPR[yr]||0.075;
-  const tl=trim.toLowerCase();
-  if(tl.includes("rubicon"))r-=0.015;
-  else if(tl.includes("high altitude"))r-=0.005;
-  if(km>60000)r+=0.020; else if(km>40000)r+=0.010; else if(km<20000)r-=0.008;
-  return Math.max(r,0.05);
-}
-function forecastVal(prix,km,trim,years){
-  let val=prix,kp=km||5000;
-  for(let y=1;y<=years;y++){val*=(1-annualRate(y,kp,trim));kp+=15000;}
-  return Math.max(Math.round(val),Math.round(prix*0.20));
-}
-function computeScores(rows){
-  if(!rows.length)return[];
-  const prices=rows.map(r=>r.prix);
-  const mn=Math.min(...prices),mx=Math.max(...prices);
-  const wd=rows.map(r=>{
-    const rv2=forecastVal(r.prix,r.km,r.trim,2);
-    const rv3=forecastVal(r.prix,r.km,r.trim,3);
-    const rv5=forecastVal(r.prix,r.km,r.trim,5);
-    return{...r,rv2,rv3,rv5,dy2:(r.prix-rv2)/2,dy3:(r.prix-rv3)/3,dy5:(r.prix-rv5)/5};
-  });
-  const all2=wd.map(r=>r.dy2),all3=wd.map(r=>r.dy3),all5=wd.map(r=>r.dy5);
-  const mn2=Math.min(...all2),mx2=Math.max(...all2);
-  const mn3=Math.min(...all3),mx3=Math.max(...all3);
-  const mn5=Math.min(...all5),mx5=Math.max(...all5);
-  return wd.map(r=>{
-    const ps=mx===mn?50:Math.pow((mx-r.prix)/(mx-mn),0.75)*100;
-    const km=r.km;
-    const isRub=r.trim.toLowerCase().includes("rubicon");
-    let ks=km===0?85:km<20000?95:km<30000?88:km<40000?80:km<50000?70:km<60000?57:km<75000?42:km<90000?25:15;
-    if(isRub)ks=Math.min(100,ks+8);
-    const ds2=mx2===mn2?50:Math.pow((mx2-r.dy2)/(mx2-mn2),0.75)*100;
-    const ds3=mx3===mn3?50:Math.pow((mx3-r.dy3)/(mx3-mn3),0.75)*100;
-    const ds5=mx5===mn5?50:Math.pow((mx5-r.dy5)/(mx5-mn5),0.75)*100;
-    return{...r,
-      s2:Math.round((0.40*ps+0.25*ks+0.35*ds2)*10)/10,
-      s3:Math.round((0.40*ps+0.25*ks+0.35*ds3)*10)/10,
-      s5:Math.round((0.40*ps+0.25*ks+0.35*ds5)*10)/10};
-  });
-}
-function verdict(s){if(s>=80)return["🏆 Excellent","#16A34A"];if(s>=65)return["✅ Bon deal","#22C55E"];if(s>=50)return["👍 Correct","#CA8A04"];if(s>=35)return["⚠️ Passable","#EA580C"];return["❌ À éviter","#DC2626"];}
-function scoreColor(s){if(s>=80)return"#16A34A";if(s>=65)return"#22C55E";if(s>=50)return"#EAB308";if(s>=35)return"#F97316";return"#EF4444";}
-function fmt(n){return n?"$"+n.toLocaleString("fr-CA"):"—";}
-function dealColor(d){if(!d)return["#333","#666"];if(d.includes("Great"))return["#052E16","#4ADE80"];if(d.includes("Good"))return["#063B1E","#22C55E"];if(d.includes("Fair"))return["#1C1400","#EAB308"];if(d.includes("High")||d.includes("Over"))return["#3B0A0A","#F87171"];return["#1A1A1A","#666"];}
-function rowClass(r,idx){if(r.trim.toLowerCase().includes("rubicon"))return"row-rub";if(r.src==="CarGurus.ca")return idx%2===0?"row-cg-even":"row-cg-odd";return idx%2===0?"row-at-even":"row-at-odd";}
+<div class="app">
+  <div class="header">
+    <h1>Notre Aventure en Guadeloupe !</h1>
+    <div class="sub">12 — 22 avril 2026 · Clique sur un jour pour explorer !</div>
+    <div class="palm-row">
+      <span>🌴</span><span>🐢</span><span>⛵</span><span>🌺</span><span>🦩</span>
+    </div>
+  </div>
 
-function EditCell({value,type="text",options,onChange,className=""}){
-  if(options)return<select className={`editable ${className}`} value={value} onChange={e=>onChange(e.target.value)}>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>;
-  return<input className={`editable ${type==="number"?"num":""} ${className}`} type={type} value={value} onChange={e=>onChange(type==="number"?Number(e.target.value)||0:e.target.value)} min={type==="number"?0:undefined}/>;
-}
-function ScoreCell({score}){const color=scoreColor(score);return<div className="score-cell"><div className="score-bar-wrap"><div className="score-bar" style={{width:`${score}%`,background:color}}/></div><span className="score-num" style={{color}}>{score}</span></div>;}
-
-function App(){
-  const [rows,setRows]=useState(__DATA__);
-  const [sortBy,setSortBy]=useState("s2");
-  const [sortDir,setSortDir]=useState("desc");
-  const [filterSrc,setFilterSrc]=useState("Tous");
-  const [filterTrim,setFilterTrim]=useState("Tous");
-  const [filterProv,setFilterProv]=useState("Tous");
-  const [scoreMode,setScoreMode]=useState("s2");
-  const [showMethod,setShowMethod]=useState(false);
-  const [darkMode,setDarkMode]=useState(true);
-
-  React.useEffect(()=>{document.body.className=darkMode?'':'light-mode';},[darkMode]);
-
-  const scored=useMemo(()=>computeScores(rows),[rows]);
-  const trims=["Tous","Rubicon 4WD","Sahara 4WD","High Altitude 4WD","Sahara High Altitude 4WD"];
-  const provs=["Tous",...new Set(rows.map(r=>r.prov).filter(Boolean))].sort();
-
-  const filtered=useMemo(()=>{
-    let r=scored;
-    if(filterSrc!=="Tous")r=r.filter(x=>x.src===filterSrc);
-    if(filterTrim!=="Tous")r=r.filter(x=>x.trim.toLowerCase().includes(filterTrim.toLowerCase().split(" ")[0]));
-    if(filterProv!=="Tous")r=r.filter(x=>x.prov===filterProv);
-    return r;
-  },[scored,filterSrc,filterTrim,filterProv]);
-
-  const sorted=useMemo(()=>[...filtered].sort((a,b)=>{
-    if(a.isNew&&!b.isNew)return 1;if(!a.isNew&&b.isNew)return -1;
-    let va=a[sortBy],vb=b[sortBy];
-    if(typeof va==="string"){va=va.toLowerCase();vb=vb.toLowerCase();}
-    return va<vb?(sortDir==="asc"?-1:1):va>vb?(sortDir==="asc"?1:-1):0;
-  }),[filtered,sortBy,sortDir]);
-
-  const handleSort=col=>{if(sortBy===col)setSortDir(d=>d==="asc"?"desc":"asc");else{setSortBy(col);setSortDir("desc");}};
-  const updateRow=useCallback((id,field,val)=>setRows(prev=>prev.map(r=>r.id===id?{...r,[field]:val}:r)),[]);
-  const deleteRow=id=>setRows(prev=>prev.filter(r=>r.id!==id));
-  const addRow=()=>{
-    const newId=Date.now();
-    setRows(prev=>[...prev,{id:newId,src:"CarGurus.ca",annee:2022,trim:"Rubicon 4WD",cond:"Usagé",km:50000,prix:38000,coul:"",carb:"Hybride PHEV",vendeur:"",ville:"",prov:"QC",deal:"",isNew:true}]);
-    setTimeout(()=>{const trs=document.querySelectorAll("tbody tr");if(trs.length)trs[trs.length-1].scrollIntoView({behavior:"smooth",block:"center"});},150);
-  };
-
-  const allPrix=scored.map(r=>r.prix);
-  const Th=({col,children,cls=""})=>{const active=sortBy===col;const arrow=active?(sortDir==="asc"?"↑":"↓"):"↕";return<th className={`${cls} ${active?"sorted":""}`} onClick={()=>handleSort(col)}>{children} <span style={{opacity:active?1:0.4,color:active?"var(--acc)":"inherit"}}>{arrow}</span></th>;};
-
-  return<div>
-    <div className="sticky-top">
-    <div className="header">
-      <div style={{display:"flex",alignItems:"center",gap:14}}>
-        <div className="logo-badge">4XE</div>
-        <div><div className="header-title">JEEP WRANGLER 4XE — SCORING DYNAMIQUE</div>
-        <div className="header-sub">PHEV 375hp · Bonus Rubicon · Modifie les données → scores recalculés en temps réel</div></div>
-      </div>
-      <div className="header-stats">
-        <button className="toggle-btn" onClick={()=>setDarkMode(d=>!d)}>{darkMode?"☀️ Light":"🌙 Dark"}</button>
-        <div className="stat-pill"><div className="num">{rows.length}</div><div className="lbl">Annonces</div></div>
-        <div className="stat-pill"><div className="num">{fmt(Math.min(...allPrix))}</div><div className="lbl">Prix min</div></div>
-        <div className="stat-pill"><div className="num">{fmt(Math.round(allPrix.reduce((a,b)=>a+b,0)/allPrix.length))}</div><div className="lbl">Prix moy.</div></div>
-        <div className="stat-pill"><div className="num">{fmt(Math.max(...allPrix))}</div><div className="lbl">Prix max</div></div>
+  <div class="main-layout">
+    <!-- Day selector -->
+    <div class="day-panel">
+      <h2>Nos jours</h2>
+      <div id="day-list"></div>
+      <div class="legend" style="margin-top:16px">
+        <div class="legend-item"><div class="legend-dot" style="background:#f6d55c"></div>Grande-Terre</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div>Les Saintes</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4ecdc4"></div>Basse-Terre</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Vol</div>
       </div>
     </div>
-    <div className="controls">
-      <div className="ctrl-group"><label>Source</label><select value={filterSrc} onChange={e=>setFilterSrc(e.target.value)}>{["Tous","CarGurus.ca","AutoTrader.ca"].map(o=><option key={o}>{o}</option>)}</select></div>
-      <div className="ctrl-group"><label>Trim</label><select value={filterTrim} onChange={e=>setFilterTrim(e.target.value)}>{trims.map(o=><option key={o}>{o}</option>)}</select></div>
-      <div className="ctrl-group"><label>Province</label><select value={filterProv} onChange={e=>setFilterProv(e.target.value)}>{provs.map(o=><option key={o}>{o}</option>)}</select></div>
-      <div className="sep"/>
-      <div className="ctrl-group"><label>Score</label><select value={scoreMode} onChange={e=>{setScoreMode(e.target.value);setSortBy(e.target.value);setSortDir("desc");}}><option value="s2">1-2 ans</option><option value="s3">2-3 ans</option><option value="s5">5+ ans</option></select></div>
-      <div className="sep"/>
-      <span style={{color:"var(--muted)",fontSize:11}}>Résultats: <strong style={{color:"var(--text)"}}>{sorted.length}</strong></span>
-      <button className="btn-add" onClick={addRow}>+ Ajouter</button>
-    </div>
-    <div className="legend">
-      <span style={{fontSize:11,color:"var(--muted)"}}>Score:</span>
-      {[["🏆 Excellent","#16A34A","80-100"],["✅ Bon deal","#22C55E","65-79"],["👍 Correct","#EAB308","50-64"],["⚠️ Passable","#F97316","35-49"],["❌ À éviter","#EF4444","0-34"]].map(([l,c,r])=>(
-        <div key={l} className="legend-item"><span className="score-badge-mini" style={{background:c}}>{l}</span><span>{r}</span></div>
-      ))}
-      <div className="sep"/>
-      <span className="rubicon-badge">🏅 RUBICON</span>
-      <span style={{fontSize:11,color:"var(--muted)"}}>= fond or + bonus +8pts KM + -1.5%/an dépréciation</span>
-    </div>
-    </div>{/* end sticky-top */}
 
-    <div className="table-wrap">
-      <table>
-        <thead><tr>
-          <th style={{width:36}}>Rang</th>
-          <Th col="src" cls="th-info">Source</Th>
-          <Th col="annee" cls="th-info">Année</Th>
-          <Th col="trim" cls="th-info">Trim</Th>
-          <Th col="cond" cls="th-info">Cond.</Th>
-          <Th col="km" cls="th-info">KM</Th>
-          <Th col="coul" cls="th-info">Couleur</Th>
-          <Th col="vendeur" cls="th-info">Vendeur</Th>
-          <Th col="ville" cls="th-info">Ville</Th>
-          <Th col="prov" cls="th-info">Prov.</Th>
-          <Th col="deal" cls="th-info">Deal CG</Th>
-          <Th col="prix" cls="th-price th-section-start">Prix ($)</Th>
-          <Th col="rv2" cls="th-rev th-section-start">🔮 2ans</Th>
-          <Th col="rv3" cls="th-rev">🔮 3ans</Th>
-          <Th col="rv5" cls="th-rev">🔮 5ans</Th>
-          <Th col="dy2" cls="th-depr th-section-start">💸/an 2ans</Th>
-          <Th col="dy3" cls="th-depr">💸/an 3ans</Th>
-          <Th col="dy5" cls="th-depr">💸/an 5ans</Th>
-          <Th col="s2" cls="th-score th-section-start">⭐ 1-2ans</Th>
-          <Th col="s3" cls="th-score">⭐ 2-3ans</Th>
-          <Th col="s5" cls="th-score">⭐ 5ans</Th>
-          <th className="th-score">Verdict</th>
-          <th style={{width:28}}></th>
-        </tr></thead>
-        <tbody>
-          {sorted.map((r,idx)=>{
-            const [vLabel,vColor]=verdict(r[scoreMode]);
-            const rank=idx+1;
-            const rc=rowClass(r,idx);
-            const isRub=r.trim.toLowerCase().includes("rubicon");
-            const [dbg,dfc]=dealColor(r.deal);
-            return<tr key={r.id} className={`${rc}${r.isNew?" new-row":""}`}>
-              <td className={`rank ${rank<=3?"top3":""}`}>{rank}</td>
-              <td><EditCell value={r.src} options={["CarGurus.ca","AutoTrader.ca"]} onChange={v=>updateRow(r.id,"src",v)}/></td>
-              <td><EditCell value={r.annee} type="number" onChange={v=>updateRow(r.id,"annee",v)}/></td>
-              <td style={{minWidth:140}}>
-                <div style={{display:"flex",alignItems:"center",gap:5}}>
-                  {isRub&&<span className="rubicon-badge">RUB</span>}
-                  <EditCell value={r.trim} onChange={v=>updateRow(r.id,"trim",v)}/>
-                </div>
-              </td>
-              <td><EditCell value={r.cond} options={["Neuf","Usagé"]} onChange={v=>updateRow(r.id,"cond",v)}/></td>
-              <td><EditCell value={r.km} type="number" onChange={v=>updateRow(r.id,"km",v)}/></td>
-              <td><EditCell value={r.coul} onChange={v=>updateRow(r.id,"coul",v)}/></td>
-              <td style={{minWidth:140}}><EditCell value={r.vendeur} onChange={v=>updateRow(r.id,"vendeur",v)}/></td>
-              <td><EditCell value={r.ville} onChange={v=>updateRow(r.id,"ville",v)}/></td>
-              <td><EditCell value={r.prov} onChange={v=>updateRow(r.id,"prov",v)}/></td>
-              <td>{r.deal&&<span className="deal-badge" style={{background:dbg,color:dfc,border:`1px solid ${dfc}44`}}>{r.deal}</span>}</td>
-              <td className="td-section-start"><EditCell value={r.prix} type="number" onChange={v=>updateRow(r.id,"prix",v)} className="num"/></td>
-              <td className="td-section-start price-cell resale">{fmt(r.rv2)}</td>
-              <td className="price-cell resale">{fmt(r.rv3)}</td>
-              <td className="price-cell resale">{fmt(r.rv5)}</td>
-              <td className="td-section-start price-cell depr-ann">{fmt(Math.round(r.dy2))}/an</td>
-              <td className="price-cell depr-ann">{fmt(Math.round(r.dy3))}/an</td>
-              <td className="price-cell depr-ann">{fmt(Math.round(r.dy5))}/an</td>
-              <td className="td-section-start"><ScoreCell score={r.s2}/></td>
-              <td><ScoreCell score={r.s3}/></td>
-              <td><ScoreCell score={r.s5}/></td>
-              <td><span className="verdict" style={{background:vColor+"22",color:vColor,border:`1px solid ${vColor}44`}}>{vLabel}</span></td>
-              <td><button className="btn-del" onClick={()=>deleteRow(r.id)} title="Supprimer">✕</button></td>
-            </tr>;
-          })}
-        </tbody>
-      </table>
-    </div>
+    <!-- Right: map + info -->
+    <div class="right-col">
+      <div class="map-container">
+        <div class="map-wrap">
+          <svg id="map-svg" viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg">
 
-    <div className="method-panel">
-      <button className="method-toggle" onClick={()=>setShowMethod(s=>!s)}>
-        <span>📋 Méthodologie — Jeep Wrangler 4xe (PHEV 375hp, bonus Rubicon)</span>
-        <span>{showMethod?"▲ Fermer":"▼ Voir le détail"}</span>
-      </button>
-      {showMethod&&<div className="method-body">
-        <div className="method-section"><h4>Score (0-100)</h4><ul>
-          <li><strong style={{color:"#60A5FA"}}>40%</strong> Prix dans l'échantillon</li>
-          <li><strong style={{color:"#4ADE80"}}>25%</strong> KM: &lt;20k=95 / 30k=88 / 40k=80 / 50k=70 / 60k=57 / 75k=42 / 90k+=15</li>
-          <li><strong style={{color:"#C084FC"}}>35%</strong> Dépréciation annuelle normalisée</li>
-          <li><strong style={{color:"#F59E0B"}}>Bonus Rubicon:</strong> +8pts KM + -1.5%/an dépréciation</li>
-        </ul></div>
-        <div className="method-section"><h4>Dépréciation 4xe</h4><ul>
-          <li>Taux: an1=14%, an2=12%, an3=10%, an4=9%, an5=8%</li>
-          <li>Rubicon: -1.5%/an (retient mieux sa valeur)</li>
-          <li>High Altitude: -0.5%/an</li>
-          <li>KM &gt;60k: +2%/an | &gt;40k: +1%/an | &lt;20k: -0.8%/an</li>
-          <li>Plancher: 20% du prix d'achat</li>
-        </ul></div>
-        <div className="method-section"><h4>Filtres disponibles</h4><ul>
-          <li>Par Source: CarGurus / AutoTrader</li>
-          <li>Par Trim: Rubicon / Sahara / High Altitude</li>
-          <li>Par Province: QC / ON</li>
-          <li>Trier par score 1-2 / 2-3 / 5+ ans</li>
-          <li>Rubicon = fond doré dans le tableau</li>
-        </ul></div>
-      </div>}
+            <!-- Ocean background -->
+            <rect width="520" height="480" fill="#4db8d4" rx="16"/>
+
+            <!-- Wave texture -->
+            <path d="M0 460 Q130 445 260 460 Q390 475 520 460 L520 480 L0 480 Z" fill="#3aa8c4" opacity="0.5"/>
+            <path d="M0 470 Q130 455 260 470 Q390 485 520 470 L520 480 L0 480 Z" fill="#2a98b4" opacity="0.4"/>
+
+            <!-- Decorative fish -->
+            <g opacity="0.4">
+              <ellipse cx="40" cy="60" rx="10" ry="5" fill="#fff"/>
+              <polygon points="50,60 58,55 58,65" fill="#fff"/>
+              <ellipse cx="460" cy="400" rx="8" ry="4" fill="#fff"/>
+              <polygon points="468,400 474,396 474,404" fill="#fff"/>
+            </g>
+
+            <!-- ── GRANDE-TERRE ── -->
+            <!-- Forme stylisée de Grande-Terre (partie Est) -->
+            <path id="grande-terre" d="
+              M 295 100
+              Q 310 88 330 90
+              Q 360 86 385 96
+              Q 410 106 420 124
+              Q 432 148 428 178
+              Q 424 210 410 234
+              Q 394 258 370 272
+              Q 345 285 318 286
+              Q 292 284 276 268
+              Q 262 250 260 224
+              Q 258 195 266 168
+              Q 275 140 295 100 Z
+            " fill="#7ec850" stroke="#5a9a30" stroke-width="3"/>
+
+            <!-- Grande-Terre label -->
+            <text x="340" y="185" text-anchor="middle" font-family="Baloo 2, cursive" font-size="13" font-weight="800" fill="#2a5a10">Grande-Terre</text>
+            <text x="340" y="200" text-anchor="middle" font-family="Nunito, sans-serif" font-size="10" fill="#3a7020">Île de calcaire</text>
+
+            <!-- Pointe-à-Pitre (mangrove / canal) -->
+            <ellipse cx="272" cy="205" rx="14" ry="8" fill="#5a9a30" opacity="0.7"/>
+            <text x="255" y="220" font-family="Nunito,sans-serif" font-size="8" fill="#2a4a10">PàP</text>
+
+            <!-- ── BASSE-TERRE ── -->
+            <path id="basse-terre" d="
+              M 185 90
+              Q 200 76 222 78
+              Q 244 76 258 90
+              Q 270 106 268 132
+              Q 268 160 260 190
+              Q 252 218 238 244
+              Q 222 270 204 292
+              Q 185 314 166 326
+              Q 146 337 130 332
+              Q 112 326 104 306
+              Q 96 284 100 256
+              Q 104 226 116 198
+              Q 130 168 148 142
+              Q 166 114 185 90 Z
+            " fill="#5cb85c" stroke="#3a8a3a" stroke-width="3"/>
+
+            <!-- Volcan Soufrière -->
+            <polygon points="210,92 222,72 234,92" fill="#7a7a7a" stroke="#555" stroke-width="1.5"/>
+            <ellipse cx="222" cy="68" rx="6" ry="4" fill="#ddd" opacity="0.8"/>
+            <text x="222" y="60" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#555">Soufrière</text>
+
+            <!-- Basse-Terre label -->
+            <text x="182" y="210" text-anchor="middle" font-family="Baloo 2, cursive" font-size="13" font-weight="800" fill="#1a4a1a">Basse-Terre</text>
+            <text x="182" y="225" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10" fill="#2a5a2a">Île volcanique</text>
+
+            <!-- D23 Route de la Traversée -->
+            <path d="M 258 155 Q 230 155 200 158 Q 175 158 155 162" stroke="#e8b84b" stroke-width="2.5" stroke-dasharray="6 4" fill="none" opacity="0.8"/>
+            <text x="205" y="148" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#c4933a">D23</text>
+
+            <!-- Grand Cul-de-Sac Marin (channel between islands) -->
+            <path d="M 258 190 Q 268 195 272 200" stroke="#3aa8c4" stroke-width="6" opacity="0.5" fill="none"/>
+
+            <!-- ── ILES DES SAINTES ── -->
+            <ellipse cx="150" cy="380" rx="24" ry="15" fill="#7ec850" stroke="#5a9a30" stroke-width="2"/>
+            <ellipse cx="186" cy="392" rx="20" ry="13" fill="#6eb840" stroke="#5a9a30" stroke-width="2"/>
+            <text x="168" y="415" text-anchor="middle" font-family="Baloo 2, cursive" font-size="10" font-weight="800" fill="#2a5a10">Les Saintes</text>
+
+            <!-- ── MARIE-GALANTE ── -->
+            <ellipse cx="400" cy="360" rx="30" ry="25" fill="#8cc870" stroke="#5a9a30" stroke-width="2"/>
+            <text x="400" y="364" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="#2a5a10">Marie-Galante</text>
+
+            <!-- ── LA DESIRADE ── -->
+            <ellipse cx="450" cy="140" rx="28" ry="10" fill="#a0d870" stroke="#5a9a30" stroke-width="2"/>
+            <text x="450" y="143" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#2a5a10">La Désirade</text>
+
+            <!-- ── FIXED LOCATION MARKERS ── -->
+
+            <!-- Aéroport PTP -->
+            <g id="loc-airport">
+              <circle cx="272" cy="178" r="10" fill="#a78bfa" stroke="#6d28d9" stroke-width="2"/>
+              <text x="272" y="182" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">✈</text>
+            </g>
+
+            <!-- Saint-François -->
+            <g id="loc-stfrancois">
+              <circle cx="360" cy="248" r="10" fill="#f6d55c" stroke="#c4933a" stroke-width="2"/>
+              <text x="360" y="252" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏠</text>
+              <text x="375" y="248" font-family="Nunito,sans-serif" font-size="8" fill="#3a2800" font-weight="700">St-François</text>
+            </g>
+
+            <!-- Logement D23 / Mahaut -->
+            <g id="loc-d23">
+              <circle cx="232" cy="162" r="10" fill="#4ecdc4" stroke="#0097a7" stroke-width="2"/>
+              <text x="232" y="166" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏠</text>
+              <text x="248" y="158" font-family="Nunito,sans-serif" font-size="8" fill="#004d5a" font-weight="700">D23/Mahaut</text>
+            </g>
+
+            <!-- Trois-Rivières (ferry départ) -->
+            <g id="loc-3riv">
+              <circle cx="178" cy="308" r="8" fill="#fff" stroke="#1a6b8a" stroke-width="2"/>
+              <text x="178" y="312" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">⚓</text>
+              <text x="162" y="322" font-family="Nunito,sans-serif" font-size="7" fill="#1a4a6b" font-weight="700">3-Rivières</text>
+            </g>
+
+            <!-- Terre-de-Haut / Saintes logement -->
+            <g id="loc-saintes">
+              <circle cx="162" cy="378" r="10" fill="#ff6b6b" stroke="#c0392b" stroke-width="2"/>
+              <text x="162" y="382" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏠</text>
+              <text x="178" y="374" font-family="Nunito,sans-serif" font-size="8" fill="#7b0000" font-weight="700">Terre-de-Haut</text>
+            </g>
+
+            <!-- Malendure / Bouillante -->
+            <g id="loc-malendure">
+              <circle cx="118" cy="224" r="8" fill="#4ecdc4" stroke="#0097a7" stroke-width="2"/>
+              <text x="118" y="228" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🤿</text>
+              <text x="96" y="218" font-family="Nunito,sans-serif" font-size="7" fill="#004d5a" font-weight="700">Malendure</text>
+            </g>
+
+            <!-- Deshaies + Jardin botanique -->
+            <g id="loc-deshaies">
+              <circle cx="132" cy="116" r="10" fill="#ec4899" stroke="#9d174d" stroke-width="2"/>
+              <text x="132" y="120" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">🌺</text>
+              <text x="148" y="112" font-family="Nunito,sans-serif" font-size="7" fill="#831843" font-weight="700">Jardin botanique</text>
+              <text x="148" y="121" font-family="Nunito,sans-serif" font-size="7" fill="#831843" font-weight="700">Deshaies</text>
+            </g>
+
+            <!-- Zoo de Guadeloupe (D23, entre logement et Pointe-Noire) -->
+            <g id="loc-zoo">
+              <circle cx="218" cy="164" r="10" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+              <text x="218" y="168" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">🦎</text>
+              <text x="204" y="178" font-family="Nunito,sans-serif" font-size="7" fill="#7c2d12" font-weight="700">Zoo</text>
+            </g>
+
+            <!-- Anse à la Gourde / Caravelle -->
+            <g id="loc-gourde">
+              <circle cx="378" cy="224" r="8" fill="#f6d55c" stroke="#c4933a" stroke-width="2"/>
+              <text x="378" y="228" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🐢</text>
+            </g>
+
+            <!-- Valombreuse / Petit-Bourg -->
+            <g id="loc-valombreuse">
+              <circle cx="268" cy="132" r="8" fill="#4ecdc4" stroke="#0097a7" stroke-width="2"/>
+              <text x="268" y="136" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🌸</text>
+              <text x="280" y="128" font-family="Nunito,sans-serif" font-size="7" fill="#004d5a" font-weight="700">Valombreuse</text>
+            </g>
+
+            <!-- Route path layer (drawn dynamically) -->
+            <g id="route-layer"></g>
+
+            <!-- Active pulse layer -->
+            <g id="pulse-layer"></g>
+
+            <!-- Boussole -->
+            <g transform="translate(476, 36)">
+              <circle r="20" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+              <text y="-6" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="#fff" font-weight="700">N</text>
+              <line x1="0" y1="-3" x2="0" y2="-14" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="0" y1="3" x2="0" y2="14" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(255,255,255,0.6)" stroke-width="1" stroke-linecap="round"/>
+            </g>
+
+            <!-- Scale -->
+            <g transform="translate(20, 455)">
+              <line x1="0" y1="0" x2="40" y2="0" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
+              <line x1="40" y1="-4" x2="40" y2="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
+              <text x="20" y="-8" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="rgba(255,255,255,0.8)">~20 km</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Info card -->
+      <div id="info-area">
+        <div class="welcome-card">
+          <h3>Bienvenue dans notre aventure ! 🌴</h3>
+          <p>Clique sur un jour dans la liste à gauche pour voir ce qu'on va faire ce jour-là sur la carte !</p>
+          <div class="stats-row">
+            <div class="stat-pill">10 nuits</div>
+            <div class="stat-pill">3 îles</div>
+            <div class="stat-pill">2 ferries</div>
+            <div class="stat-pill">Plein d'aventures !</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>;
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  {
+    id: 1, date: "12 avr.", label: "Arrivée !", icon: "✈️", color: "#a78bfa",
+    zone: "Vol + Grande-Terre", zoneBg: "#ede9fe", zoneFg: "#4c1d95",
+    morning: "Vol Montréal → Pointe-à-Pitre ✈️\nAéroport Pôle Caraïbes\nRécupération de la voiture avec siège bébé",
+    afternoon: "Route vers Saint-François (45 min)\nInstallation au logement\nPremier bain : plage Raisins Clairs 🌊",
+    fact: "La Guadeloupe a la forme d'un papillon ! Les deux îles principales sont reliées par un pont sur un bras de mer appelé la Rivière Salée.",
+    factTitle: "Le savais-tu ?",
+    transport: "✈️ Vol depuis Montréal · 🚗 Voiture de location à l'aéroport",
+    routes: [{ from: {x:272,y:178}, to: {x:360,y:248}, color:"#a78bfa" }],
+    pulses: [{x:272,y:178}, {x:360,y:248}]
+  },
+  {
+    id: 2, date: "13 avr.", label: "Marché & plage", icon: "🏪", color: "#f6d55c",
+    zone: "Grande-Terre · Saint-François", zoneBg: "#fef9c3", zoneFg: "#713f12",
+    morning: "Marché de Sainte-Anne 🛒\n(fruits, épices, artisanat créole)\nPiscine naturelle de la plage juste à côté",
+    afternoon: "Plage de Bois Jolan 🏖️\n(sable blanc, eau très calme\nparfaite pour bébé de 18 mois !)",
+    fact: "La Guadeloupe produit de délicieux fruits tropicaux : mangues, papayes, ananas, corossols... Le marché est l'endroit idéal pour les goûter tous !",
+    factTitle: "Les fruits tropicaux !",
+    transport: "🚗 Saint-François → Sainte-Anne : 15 min",
+    routes: [{ from: {x:360,y:248}, to: {x:328,y:264}, color:"#f6d55c" }],
+    pulses: [{x:360,y:248}]
+  },
+  {
+    id: 3, date: "14 avr.", label: "Tortues !", icon: "🐢", color: "#34d399",
+    zone: "Grande-Terre · Est", zoneBg: "#d1fae5", zoneFg: "#064e3b",
+    morning: "Snorkeling Anse à la Gourde 🤿\n(5 min de St-François)\nTortues vertes dans les herbiers marins !",
+    afternoon: "Lagon de la Caravelle 🌊\n(eau ultra calme, peu profonde\nmeilleure plage pour bébé de Grande-Terre)",
+    fact: "Les tortues marines de Guadeloupe peuvent vivre plus de 80 ans ! Elles reviennent toujours sur la plage où elles sont nées pour pondre leurs œufs. Ne les touche jamais, c'est leur règle !",
+    factTitle: "Les tortues marines",
+    transport: "🚗 Saint-François → Anse Gourde : 5 min seulement !",
+    routes: [
+      { from: {x:360,y:248}, to: {x:378,y:224}, color:"#34d399" },
+      { from: {x:378,y:224}, to: {x:368,y:238}, color:"#34d399" }
+    ],
+    pulses: [{x:360,y:248}, {x:378,y:224}]
+  },
+  {
+    id: 4, date: "15 avr.", label: "Canne & snorkeling", icon: "🎋", color: "#fb923c",
+    zone: "Grande-Terre · Saint-François", zoneBg: "#fff7ed", zoneFg: "#7c2d12",
+    morning: "Maison de la Canne à sucre 🎋\nVisite guidée ~1h\nComment on fabrique le rhum et le sucre !\n(sur Grande-Terre, proche du logement)",
+    afternoon: "Plage de l'Anse à la Gourde 🐢\nDernière baignade + snorkeling côté Atlantique\nPréparation des bagages ce soir !\n(départ pour les Saintes demain matin à 7h)",
+    fact: "La canne à sucre a été cultivée en Guadeloupe depuis le 17ème siècle. Une tige de canne peut mesurer jusqu'à 4 mètres de haut ! Le jus de canne s'appelle le 'vesou' en créole.",
+    factTitle: "La canne à sucre",
+    transport: "🚗 → Maison Canne ~20 min · Anse Gourde ~5 min de St-François",
+    routes: [{ from: {x:360,y:248}, to: {x:378,y:224}, color:"#fb923c" }],
+    pulses: [{x:360,y:248}, {x:378,y:224}]
+  },
+  {
+    id: 5, date: "16 avr.", label: "Ferry 9h00 !", icon: "⛵", color: "#ff6b6b",
+    zone: "→ Les Saintes !", zoneBg: "#fee2e2", zoneFg: "#7f1d1d",
+    morning: "⏰ 7h00 : Départ Saint-François\nRoute vers Trois-Rivières\n⏰ 9h00 : FERRY ! (25 minutes de traversée)\nInstallation sur l'île",
+    afternoon: "Plage Pompierre 🏝️\n(eau cristalline comme du verre !)\nVillage de Bourg : glaces et découverte",
+    fact: "Les îles des Saintes ont été colonisées en 1648 et les habitants s'appellent les 'Saintois'. C'est l'une des rares îles des Antilles où la majorité de la population descend de marins bretons et normands !",
+    factTitle: "Les Îles des Saintes",
+    transport: "⛵ Ferry Trois-Rivières → Terre-de-Haut · Départ 9h00, arrivée 9h25",
+    routes: [
+      { from: {x:360,y:248}, to: {x:178,y:308}, color:"#ff6b6b", dashed: true },
+      { from: {x:178,y:308}, to: {x:162,y:378}, color:"#ff6b6b" }
+    ],
+    pulses: [{x:178,y:308}, {x:162,y:378}]
+  },
+  {
+    id: 6, date: "17 avr.", label: "Explorer les Saintes", icon: "🏰", color: "#ff6b6b",
+    zone: "Les Saintes · Terre-de-Haut", zoneBg: "#fee2e2", zoneFg: "#7f1d1d",
+    morning: "Fort Napoléon 🏰\n(vue panoramique incroyable !)\nPetit train électrique du village (~45 min)",
+    afternoon: "Plage du Pain de Sucre 🤿\n(eau cristalline, snorkeling)\nCoucher de soleil depuis le port 🌅",
+    fact: "Le 'Pain de Sucre' est un rocher en forme de cône. On en trouve aussi à Rio de Janeiro au Brésil ! Sa forme vient de l'érosion de la roche volcanique par la mer pendant des millions d'années.",
+    factTitle: "Le Pain de Sucre",
+    transport: "🚶 Tout à pied ou en petit train · Pas de voiture sur l'île !",
+    routes: [],
+    pulses: [{x:162,y:378}]
+  },
+  {
+    id: 7, date: "18 avr.", label: "Retour + café Jarry", icon: "🛳️", color: "#4ecdc4",
+    zone: "Saintes → Basse-Terre", zoneBg: "#ccfbf1", zoneFg: "#042f2e",
+    morning: "Dernier bain aux Saintes 🏊\n⏰ 13h15 : FERRY retour !\nTerre-de-Haut → Trois-Rivières (25 min)",
+    afternoon: "🛑 Stop café : Jarry, boulevard de la Pointe\n(La Maison des Pains - délicieux !)\nCourses + route vers logement sur la D23 🏠",
+    fact: "La zone de Jarry est la plus grande zone industrielle et commerciale des Antilles françaises ! Elle s'est développée grâce au port de Pointe-à-Pitre qui est l'un des plus importants de la Caraïbe.",
+    factTitle: "Jarry, grand carrefour !",
+    transport: "⛵ Ferry 13h15 retour · 🚗 → Jarry ~35 min · → logement D23 ~15 min",
+    routes: [
+      { from: {x:162,y:378}, to: {x:178,y:308}, color:"#4ecdc4" },
+      { from: {x:178,y:308}, to: {x:272,y:178}, color:"#4ecdc4", dashed: true },
+      { from: {x:272,y:178}, to: {x:232,y:162}, color:"#4ecdc4" }
+    ],
+    pulses: [{x:162,y:378}, {x:272,y:178}, {x:232,y:162}]
+  },
+  {
+    id: 8, date: "19 avr.", label: "Zoo & cascade !", icon: "🦎", color: "#4ecdc4",
+    zone: "D23 · Forêt tropicale", zoneBg: "#ccfbf1", zoneFg: "#042f2e",
+    morning: "Zoo de Guadeloupe 🦎\n(5 min du logement, sur la D23 !)\nIguanes géants, singes araignées, jaguar\nOcelots, ratons laveurs, perroquets\nPonts de singe en cime des arbres !",
+    afternoon: "Cascade aux Écrevisses 💧\n(3 minutes à pied du logement !)\nSentier pavé 100% accessible poussette\nBassin turquoise, 10m de haut\n→ Aller tôt le matin ou tard : moins de monde",
+    fact: "Le Zoo de Guadeloupe est situé au cœur de la forêt tropicale sur la route de la Traversée (D23). Il abrite 450 animaux de 85 espèces différentes, dont des animaux qu'on ne trouve qu'aux Caraïbes comme le raton laveur de Guadeloupe !",
+    factTitle: "Le Zoo dans la jungle !",
+    transport: "🚶 Zoo : 5 min voiture depuis logement D23 · Cascade : 3 min à pied !",
+    routes: [
+      { from: {x:232,y:162}, to: {x:244,y:158}, color:"#4ecdc4" },
+      { from: {x:244,y:158}, to: {x:232,y:152}, color:"#4ecdc4" }
+    ],
+    pulses: [{x:232,y:162}, {x:244,y:158}]
+  },
+  {
+    id: 9, date: "20 avr.", label: "Jardins & tortues", icon: "🌸", color: "#0ea5e9",
+    zone: "D23 + Bouillante · Caraïbes", zoneBg: "#e0f2fe", zoneFg: "#0c4a6e",
+    morning: "Jardin de Valombreuse 🌸\n(10 min est par la D23 · Petit-Bourg)\nPetit train électrique pour les enfants !\nFlamants roses, ibis rouges\nAires de jeux, 5 hectares · -3 ans gratuit",
+    afternoon: "Plage de Malendure 🤿\n(15 min au sud · Bouillante)\nSable noir volcanique, tortues marines !\nExcursion bateau : Îlets Pigeon / Réserve Cousteau\nBains chauds géothermaux ♨️",
+    fact: "La Réserve Cousteau tire son nom du célèbre explorateur Jacques-Yves Cousteau qui a découvert la beauté de ses fonds marins en 1959 ! Aujourd'hui, plus de 300 espèces de poissons y vivent.",
+    factTitle: "La Réserve Cousteau",
+    transport: "🚗 D23 → Valombreuse : 10 min · → Malendure : 15 min au sud",
+    routes: [
+      { from: {x:232,y:162}, to: {x:268,y:132}, color:"#0ea5e9" },
+      { from: {x:232,y:162}, to: {x:118,y:224}, color:"#0ea5e9" }
+    ],
+    pulses: [{x:232,y:162}, {x:268,y:132}, {x:118,y:224}]
+  },
+  {
+    id: 10, date: "21 avr.", label: "Jardin magique", icon: "🦩", color: "#ec4899",
+    zone: "Deshaies · Nord Basse-Terre", zoneBg: "#fce7f3", zoneFg: "#831843",
+    morning: "Jardin botanique de Deshaies 🌺\n(40 min au nord)\nFlamants roses, perroquets, vue sur la mer !\nToucan, ibis rouges...",
+    afternoon: "Plage de Grande-Anse Deshaies 🏖️\n(juste en dessous du jardin !)\nSable doré, coucher de soleil côté Caraïbes 🌅",
+    fact: "Le jardin botanique de Deshaies a été créé par l'humoriste français Coluche ! Après sa mort en 1986, sa famille a transformé son domaine en ce jardin magnifique. Il accueille aujourd'hui des centaines d'espèces tropicales.",
+    factTitle: "Le jardin de Coluche !",
+    transport: "🚗 D23 → Deshaies : 40 min par la côte Caraïbes",
+    routes: [{ from: {x:232,y:162}, to: {x:132,y:116}, color:"#ec4899" }],
+    pulses: [{x:232,y:162}, {x:132,y:116}]
+  },
+  {
+    id: 11, date: "22 avr.", label: "Au revoir ! ✈️", icon: "✈️", color: "#a78bfa",
+    zone: "D23 → Aéroport PTP", zoneBg: "#ede9fe", zoneFg: "#4c1d95",
+    morning: "Dernier petit-déjeuner créole 🥐\nBagages · Nettoyage logement\n⏰ Départ tôt pour l'aéroport\n(vol retour à 13h → partir vers 10h30)",
+    afternoon: "Route D23 → Aéroport PTP ✈️\n(~45 min)\nDépôt voiture de location\nDuty-free : rhum, épices, chocolat !\nVol retour Montréal 🌴",
+    fact: "L'aéroport de Pointe-à-Pitre s'appelle 'Pôle Caraïbes'. C'est l'un des plus grands aéroports des Antilles françaises, avec plus de 2 millions de passagers chaque année !",
+    factTitle: "L'aéroport Pôle Caraïbes",
+    transport: "🚗 D23 → PTP : 45 min · ✈️ Vol 13h retour Montréal",
+    routes: [{ from: {x:232,y:162}, to: {x:272,y:178}, color:"#a78bfa" }],
+    pulses: [{x:232,y:162}, {x:272,y:178}]
+  }
+];
+
+let activeDay = null;
+
+function buildDayList() {
+  const list = document.getElementById('day-list');
+  DAYS.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn';
+    btn.id = `btn-${d.id}`;
+    btn.innerHTML = `
+      <div class="day-num">${d.id}</div>
+      <span class="day-icon">${d.icon}</span>
+      <div class="day-label">
+        <span>${d.label}</span>
+        <span class="day-date">${d.date}</span>
+      </div>
+    `;
+    btn.addEventListener('click', () => selectDay(d.id));
+    list.appendChild(btn);
+  });
 }
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
+function selectDay(id) {
+  activeDay = id;
+  // Update buttons
+  document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-${id}`).classList.add('active');
+  const day = DAYS.find(d => d.id === id);
+  drawRoutes(day);
+  drawPulses(day);
+  renderInfoCard(day);
+  // Scroll info into view on mobile
+  document.getElementById('info-area').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function drawRoutes(day) {
+  const layer = document.getElementById('route-layer');
+  layer.innerHTML = '';
+  if (!day.routes || day.routes.length === 0) return;
+
+  day.routes.forEach((r, i) => {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const dx = r.to.x - r.from.x;
+    const dy = r.to.y - r.from.y;
+    const cx = r.from.x + dx * 0.5 + (dy > 0 ? -20 : 20);
+    const cy = r.from.y + dy * 0.5 + (dx > 0 ? 20 : -20);
+    const d = `M ${r.from.x} ${r.from.y} Q ${cx} ${cy} ${r.to.x} ${r.to.y}`;
+    line.setAttribute('d', d);
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', r.color || '#fff');
+    line.setAttribute('stroke-width', '3.5');
+    line.setAttribute('stroke-linecap', 'round');
+    if (r.dashed) line.setAttribute('stroke-dasharray', '8 5');
+    line.classList.add('route-path');
+    line.style.animationDelay = `${i * 0.15}s`;
+
+    // Arrow at end
+    const arrowEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    arrowEl.setAttribute('cx', r.to.x);
+    arrowEl.setAttribute('cy', r.to.y);
+    arrowEl.setAttribute('r', '5');
+    arrowEl.setAttribute('fill', r.color || '#fff');
+
+    layer.appendChild(line);
+    layer.appendChild(arrowEl);
+  });
+}
+
+function drawPulses(day) {
+  const layer = document.getElementById('pulse-layer');
+  layer.innerHTML = '';
+  if (!day.pulses) return;
+  day.pulses.forEach(p => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    ring.setAttribute('cx', p.x);
+    ring.setAttribute('cy', p.y);
+    ring.setAttribute('r', '10');
+    ring.setAttribute('fill', 'none');
+    ring.setAttribute('stroke', '#fff');
+    ring.setAttribute('stroke-width', '2');
+    ring.setAttribute('opacity', '0.8');
+    ring.classList.add('pulse-ring');
+    g.appendChild(ring);
+    layer.appendChild(g);
+  });
+}
+
+function renderInfoCard(day) {
+  const area = document.getElementById('info-area');
+  const morn = (day.morning || '').replace(/\n/g, '<br>');
+  const aftn = (day.afternoon || '').replace(/\n/g, '<br>');
+  area.innerHTML = `
+    <div class="info-card">
+      <div class="info-header">
+        <div class="info-icon">${day.icon}</div>
+        <div>
+          <div class="info-title">${day.label}</div>
+          <div class="info-date">${day.date} · Jour ${day.id} sur 11</div>
+        </div>
+      </div>
+      <div class="info-zone-badge" style="background:${day.zoneBg};color:${day.zoneFg}">${day.zone}</div>
+      <div class="activities-grid">
+        <div class="activity-block morning">
+          <div class="act-label">Matin</div>
+          <div class="act-text">${morn}</div>
+        </div>
+        <div class="activity-block afternoon">
+          <div class="act-label">Après-midi</div>
+          <div class="act-text">${aftn}</div>
+        </div>
+      </div>
+      <div class="fun-fact">
+        <div class="fact-title">${day.factTitle}</div>
+        ${day.fact}
+      </div>
+      <div class="transport-row">
+        <span>${day.transport}</span>
+      </div>
+    </div>
+  `;
+}
+
+buildDayList();
+selectDay(1);
 </script>
 </body>
 </html>
