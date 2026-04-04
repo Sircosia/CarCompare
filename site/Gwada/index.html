@@ -326,187 +326,239 @@
     <div class="right-col">
       <div class="map-container">
         <div class="map-wrap">
-          <svg id="map-svg" viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg">
+          <svg id="map-svg" viewBox="0 0 520 500" xmlns="http://www.w3.org/2000/svg">
 
-            <!-- Ocean background -->
-            <rect width="520" height="480" fill="#4db8d4" rx="16"/>
+            <!-- Océan -->
+            <rect width="520" height="500" fill="#4db8d4" rx="16"/>
+            <path d="M0 475 Q130 460 260 475 Q390 490 520 475 L520 500 L0 500 Z" fill="#3aa8c4" opacity="0.5"/>
 
-            <!-- Wave texture -->
-            <path d="M0 460 Q130 445 260 460 Q390 475 520 460 L520 480 L0 480 Z" fill="#3aa8c4" opacity="0.5"/>
-            <path d="M0 470 Q130 455 260 470 Q390 485 520 470 L520 480 L0 480 Z" fill="#2a98b4" opacity="0.4"/>
-
-            <!-- Decorative fish -->
-            <g opacity="0.4">
-              <ellipse cx="40" cy="60" rx="10" ry="5" fill="#fff"/>
-              <polygon points="50,60 58,55 58,65" fill="#fff"/>
-              <ellipse cx="460" cy="400" rx="8" ry="4" fill="#fff"/>
-              <polygon points="468,400 474,396 474,404" fill="#fff"/>
+            <!-- Poissons déco -->
+            <g opacity="0.35">
+              <ellipse cx="38" cy="55" rx="10" ry="5" fill="#fff"/>
+              <polygon points="48,55 56,50 56,60" fill="#fff"/>
+              <ellipse cx="480" cy="420" rx="9" ry="4.5" fill="#fff"/>
+              <polygon points="489,420 497,416 497,424" fill="#fff"/>
+              <ellipse cx="42" cy="420" rx="7" ry="3.5" fill="#fff"/>
+              <polygon points="49,420 55,417 55,423" fill="#fff"/>
             </g>
 
-            <!-- ── GRANDE-TERRE ── -->
-            <!-- Forme stylisée de Grande-Terre (partie Est) -->
-            <path id="grande-terre" d="
-              M 295 100
-              Q 310 88 330 90
-              Q 360 86 385 96
-              Q 410 106 420 124
-              Q 432 148 428 178
-              Q 424 210 410 234
-              Q 394 258 370 272
-              Q 345 285 318 286
-              Q 292 284 276 268
-              Q 262 250 260 224
-              Q 258 195 266 168
-              Q 275 140 295 100 Z
-            " fill="#7ec850" stroke="#5a9a30" stroke-width="3"/>
-
-            <!-- Grande-Terre label -->
-            <text x="340" y="185" text-anchor="middle" font-family="Baloo 2, cursive" font-size="13" font-weight="800" fill="#2a5a10">Grande-Terre</text>
-            <text x="340" y="200" text-anchor="middle" font-family="Nunito, sans-serif" font-size="10" fill="#3a7020">Île de calcaire</text>
-
-            <!-- Pointe-à-Pitre (mangrove / canal) -->
-            <ellipse cx="272" cy="205" rx="14" ry="8" fill="#5a9a30" opacity="0.7"/>
-            <text x="255" y="220" font-family="Nunito,sans-serif" font-size="8" fill="#2a4a10">PàP</text>
-
-            <!-- ── BASSE-TERRE ── -->
-            <path id="basse-terre" d="
-              M 185 90
-              Q 200 76 222 78
-              Q 244 76 258 90
-              Q 270 106 268 132
-              Q 268 160 260 190
-              Q 252 218 238 244
-              Q 222 270 204 292
-              Q 185 314 166 326
-              Q 146 337 130 332
-              Q 112 326 104 306
-              Q 96 284 100 256
-              Q 104 226 116 198
-              Q 130 168 148 142
-              Q 166 114 185 90 Z
+            <!-- ══ BASSE-TERRE (forme papillon gauche) ══ -->
+            <path d="
+              M 185 78
+              Q 200 64 222 66
+              Q 244 64 258 78
+              Q 270 94 268 120
+              Q 268 148 260 178
+              Q 252 208 238 236
+              Q 222 264 204 288
+              Q 185 312 166 328
+              Q 146 342 130 338
+              Q 112 330 104 310
+              Q 96 288 100 260
+              Q 104 230 116 202
+              Q 130 172 148 146
+              Q 166 118 178 94
+              Q 182 84 185 78 Z
             " fill="#5cb85c" stroke="#3a8a3a" stroke-width="3"/>
 
-            <!-- Volcan Soufrière -->
-            <polygon points="210,92 222,72 234,92" fill="#7a7a7a" stroke="#555" stroke-width="1.5"/>
-            <ellipse cx="222" cy="68" rx="6" ry="4" fill="#ddd" opacity="0.8"/>
-            <text x="222" y="60" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#555">Soufrière</text>
-
-            <!-- Basse-Terre label -->
-            <text x="182" y="210" text-anchor="middle" font-family="Baloo 2, cursive" font-size="13" font-weight="800" fill="#1a4a1a">Basse-Terre</text>
-            <text x="182" y="225" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10" fill="#2a5a2a">Île volcanique</text>
+            <!-- Label Basse-Terre -->
+            <text x="182" y="212" text-anchor="middle" font-family="Baloo 2, cursive" font-size="13" font-weight="800" fill="#1a4a1a">Basse-Terre</text>
+            <text x="182" y="227" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10" fill="#2a5a2a">Île volcanique</text>
 
             <!-- D23 Route de la Traversée -->
-            <path d="M 258 155 Q 230 155 200 158 Q 175 158 155 162" stroke="#e8b84b" stroke-width="2.5" stroke-dasharray="6 4" fill="none" opacity="0.8"/>
-            <text x="205" y="148" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#c4933a">D23</text>
+            <path d="M 256 148 Q 226 152 196 155 Q 170 157 148 158" stroke="#e8b84b" stroke-width="2.5" stroke-dasharray="6 4" fill="none" opacity="0.9"/>
+            <text x="202" y="143" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#9a6300" font-weight="700">D23</text>
 
-            <!-- Grand Cul-de-Sac Marin (channel between islands) -->
-            <path d="M 258 190 Q 268 195 272 200" stroke="#3aa8c4" stroke-width="6" opacity="0.5" fill="none"/>
+            <!-- ══ GRANDE-TERRE (forme papillon droite) ══ -->
+            <path d="
+              M 295 88
+              Q 310 76 330 78
+              Q 360 74 385 84
+              Q 410 94 420 112
+              Q 432 136 428 166
+              Q 424 198 410 222
+              Q 394 246 370 260
+              Q 345 273 318 274
+              Q 292 272 276 256
+              Q 262 238 260 212
+              Q 258 183 266 156
+              Q 275 128 295 88 Z
+            " fill="#7ec850" stroke="#5a9a30" stroke-width="3"/>
 
-            <!-- ── ILES DES SAINTES ── -->
-            <ellipse cx="150" cy="380" rx="24" ry="15" fill="#7ec850" stroke="#5a9a30" stroke-width="2"/>
-            <ellipse cx="186" cy="392" rx="20" ry="13" fill="#6eb840" stroke="#5a9a30" stroke-width="2"/>
-            <text x="168" y="415" text-anchor="middle" font-family="Baloo 2, cursive" font-size="10" font-weight="800" fill="#2a5a10">Les Saintes</text>
+            <!-- Label Grande-Terre -->
+            <text x="342" y="182" text-anchor="middle" font-family="Baloo 2, cursive" font-size="13" font-weight="800" fill="#2a5a10">Grande-Terre</text>
+            <text x="342" y="197" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10" fill="#3a7020">Île de calcaire</text>
 
-            <!-- ── MARIE-GALANTE ── -->
-            <ellipse cx="400" cy="360" rx="30" ry="25" fill="#8cc870" stroke="#5a9a30" stroke-width="2"/>
-            <text x="400" y="364" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="#2a5a10">Marie-Galante</text>
+            <!-- Canal Rivière Salée -->
+            <path d="M 258 195 Q 264 182 268 168 Q 272 155 262 142" stroke="#4db8d4" stroke-width="7" fill="none" opacity="0.6"/>
 
-            <!-- ── LA DESIRADE ── -->
-            <ellipse cx="450" cy="140" rx="28" ry="10" fill="#a0d870" stroke="#5a9a30" stroke-width="2"/>
-            <text x="450" y="143" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#2a5a10">La Désirade</text>
+            <!-- ══ ILES DES SAINTES ══ -->
+            <ellipse cx="148" cy="400" rx="26" ry="15" fill="#7ec850" stroke="#5a9a30" stroke-width="2"/>
+            <ellipse cx="184" cy="410" rx="21" ry="13" fill="#6eb840" stroke="#5a9a30" stroke-width="2"/>
+            <text x="166" y="433" text-anchor="middle" font-family="Baloo 2, cursive" font-size="10" font-weight="800" fill="#2a5a10">Les Saintes</text>
 
-            <!-- ── FIXED LOCATION MARKERS ── -->
+            <!-- ══ MARIE-GALANTE ══ -->
+            <ellipse cx="420" cy="390" rx="30" ry="25" fill="#8cc870" stroke="#5a9a30" stroke-width="2"/>
+            <text x="420" y="394" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="#2a5a10">Marie-Galante</text>
 
-            <!-- Aéroport PTP -->
+            <!-- ══ LA DESIRADE ══ -->
+            <ellipse cx="466" cy="126" rx="28" ry="10" fill="#a0d870" stroke="#5a9a30" stroke-width="2"/>
+            <text x="466" y="129" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="#2a5a10">La Désirade</text>
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  MARQUEURS — positions dans papillon  -->
+            <!-- Coord papillon : BT gauche, GT droite -->
+            <!-- BT : centre ~x=185, GT : centre ~x=342 -->
+            <!-- ══════════════════════════════════════ -->
+
+            <!-- AÉROPORT PTP (jonction ouest GT) -->
             <g id="loc-airport">
-              <circle cx="272" cy="178" r="10" fill="#a78bfa" stroke="#6d28d9" stroke-width="2"/>
-              <text x="272" y="182" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">✈</text>
+              <circle cx="270" cy="192" r="11" fill="#a78bfa" stroke="#6d28d9" stroke-width="2.5"/>
+              <text x="270" y="197" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12">✈</text>
+              <text x="256" y="211" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#4c1d95" font-weight="700">Aéroport PàP</text>
             </g>
 
-            <!-- Saint-François -->
+            <!-- ST-FRANCOIS (est GT) -->
             <g id="loc-stfrancois">
-              <circle cx="360" cy="248" r="10" fill="#f6d55c" stroke="#c4933a" stroke-width="2"/>
-              <text x="360" y="252" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏠</text>
-              <text x="375" y="248" font-family="Nunito,sans-serif" font-size="8" fill="#3a2800" font-weight="700">St-François</text>
+              <circle cx="400" cy="220" r="11" fill="#f6d55c" stroke="#c4933a" stroke-width="2.5"/>
+              <text x="400" y="225" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12">🏠</text>
+              <text x="416" y="215" font-family="Nunito,sans-serif" font-size="7" fill="#633806" font-weight="700">St-François</text>
+              <text x="416" y="224" font-family="Nunito,sans-serif" font-size="7" fill="#854F0B">12-16 avr.</text>
             </g>
 
-            <!-- Logement D23 / Mahaut -->
-            <g id="loc-d23">
-              <circle cx="232" cy="162" r="10" fill="#4ecdc4" stroke="#0097a7" stroke-width="2"/>
-              <text x="232" y="166" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏠</text>
-              <text x="248" y="158" font-family="Nunito,sans-serif" font-size="8" fill="#004d5a" font-weight="700">D23/Mahaut</text>
+            <!-- SAINTE-ANNE + Bois Jolan (sud GT) -->
+            <g id="loc-ste-anne">
+              <circle cx="358" cy="248" r="9" fill="#f6d55c" stroke="#c4933a" stroke-width="2"/>
+              <text x="358" y="253" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏪</text>
+              <text x="342" y="264" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#633806" font-weight="700">Ste-Anne + Bois Jolan</text>
             </g>
 
-            <!-- Trois-Rivières (ferry départ) -->
-            <g id="loc-3riv">
-              <circle cx="178" cy="308" r="8" fill="#fff" stroke="#1a6b8a" stroke-width="2"/>
-              <text x="178" y="312" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">⚓</text>
-              <text x="162" y="322" font-family="Nunito,sans-serif" font-size="7" fill="#1a4a6b" font-weight="700">3-Rivières</text>
-            </g>
-
-            <!-- Terre-de-Haut / Saintes logement -->
-            <g id="loc-saintes">
-              <circle cx="162" cy="378" r="10" fill="#ff6b6b" stroke="#c0392b" stroke-width="2"/>
-              <text x="162" y="382" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏠</text>
-              <text x="178" y="374" font-family="Nunito,sans-serif" font-size="8" fill="#7b0000" font-weight="700">Terre-de-Haut</text>
-            </g>
-
-            <!-- Malendure / Bouillante -->
-            <g id="loc-malendure">
-              <circle cx="118" cy="224" r="8" fill="#4ecdc4" stroke="#0097a7" stroke-width="2"/>
-              <text x="118" y="228" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🤿</text>
-              <text x="96" y="218" font-family="Nunito,sans-serif" font-size="7" fill="#004d5a" font-weight="700">Malendure</text>
-            </g>
-
-            <!-- Deshaies + Jardin botanique -->
-            <g id="loc-deshaies">
-              <circle cx="132" cy="116" r="10" fill="#ec4899" stroke="#9d174d" stroke-width="2"/>
-              <text x="132" y="120" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">🌺</text>
-              <text x="148" y="112" font-family="Nunito,sans-serif" font-size="7" fill="#831843" font-weight="700">Jardin botanique</text>
-              <text x="148" y="121" font-family="Nunito,sans-serif" font-size="7" fill="#831843" font-weight="700">Deshaies</text>
-            </g>
-
-            <!-- Zoo de Guadeloupe (D23, entre logement et Pointe-Noire) -->
-            <g id="loc-zoo">
-              <circle cx="218" cy="164" r="10" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
-              <text x="218" y="168" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">🦎</text>
-              <text x="204" y="178" font-family="Nunito,sans-serif" font-size="7" fill="#7c2d12" font-weight="700">Zoo</text>
-            </g>
-
-            <!-- Anse à la Gourde / Caravelle -->
+            <!-- ANSE A LA GOURDE (pointe est GT) -->
             <g id="loc-gourde">
-              <circle cx="378" cy="224" r="8" fill="#f6d55c" stroke="#c4933a" stroke-width="2"/>
-              <text x="378" y="228" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🐢</text>
+              <circle cx="426" cy="168" r="9" fill="#34d399" stroke="#065f46" stroke-width="2"/>
+              <text x="426" y="173" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🐢</text>
+              <text x="438" y="160" font-family="Nunito,sans-serif" font-size="7" fill="#064e3b" font-weight="700">Anse Gourde</text>
+              <text x="438" y="169" font-family="Nunito,sans-serif" font-size="7" fill="#065f46">+ Caravelle</text>
             </g>
 
-            <!-- Valombreuse / Petit-Bourg -->
+            <!-- MAISON DE LA CANNE (centre GT, vers nord-ouest) -->
+            <g id="loc-canne">
+              <circle cx="308" cy="164" r="9" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
+              <text x="308" y="169" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🎋</text>
+              <text x="292" y="180" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#7c2d12" font-weight="700">Maison Canne</text>
+            </g>
+
+            <!-- TROIS-RIVIERES (bas BT, embarcadère) -->
+            <g id="loc-3riv">
+              <circle cx="128" cy="318" r="10" fill="#fff" stroke="#1a6b8a" stroke-width="2.5"/>
+              <text x="128" y="323" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">⚓</text>
+              <text x="145" y="312" font-family="Nunito,sans-serif" font-size="7" fill="#1a4a6b" font-weight="700">Trois-Rivières</text>
+              <text x="145" y="321" font-family="Nunito,sans-serif" font-size="7" fill="#1a6b8a">ferry ⛵</text>
+            </g>
+
+            <!-- TERRE-DE-HAUT (Saintes) -->
+            <g id="loc-saintes">
+              <circle cx="155" cy="402" r="11" fill="#ff6b6b" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="155" y="407" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12">🏠</text>
+              <text x="178" y="397" font-family="Nunito,sans-serif" font-size="7" fill="#7f1d1d" font-weight="700">Terre-de-Haut</text>
+              <text x="178" y="406" font-family="Nunito,sans-serif" font-size="7" fill="#991b1b">16-18 avr.</text>
+            </g>
+
+            <!-- CAFE JARRY (juste à l'ouest de PàP, passage retour Saintes) -->
+            <g id="loc-jarry">
+              <circle cx="248" cy="168" r="9" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+              <text x="248" y="173" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">☕</text>
+              <text x="232" y="157" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#92400e" font-weight="700">Café Jarry</text>
+            </g>
+
+            <!-- LOGEMENT D23 / Mahaut (milieu BT, côté est) -->
+            <g id="loc-d23">
+              <circle cx="210" cy="152" r="11" fill="#4ecdc4" stroke="#0097a7" stroke-width="2.5"/>
+              <text x="210" y="157" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12">🏠</text>
+              <text x="228" y="145" font-family="Nunito,sans-serif" font-size="7" fill="#004d5a" font-weight="700">D23/Mahaut</text>
+              <text x="228" y="154" font-family="Nunito,sans-serif" font-size="7" fill="#0097a7">18-22 avr.</text>
+            </g>
+
+            <!-- ZOO (sur D23, est du logement) -->
+            <g id="loc-zoo">
+              <circle cx="236" cy="148" r="10" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+              <text x="236" y="153" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">🦎</text>
+              <text x="242" y="136" font-family="Nunito,sans-serif" font-size="7" fill="#7c2d12" font-weight="700">Zoo</text>
+            </g>
+
+            <!-- CASCADE (nord du logement, sur D23) -->
+            <g id="loc-cascade">
+              <circle cx="196" cy="128" r="9" fill="#60a5fa" stroke="#1d4ed8" stroke-width="2"/>
+              <text x="196" y="133" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">💧</text>
+              <text x="180" y="118" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#1e3a8a" font-weight="700">Cascade</text>
+            </g>
+
+            <!-- VALOMBREUSE (côté est BT, vers PàP) -->
             <g id="loc-valombreuse">
-              <circle cx="268" cy="132" r="8" fill="#4ecdc4" stroke="#0097a7" stroke-width="2"/>
-              <text x="268" y="136" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🌸</text>
-              <text x="280" y="128" font-family="Nunito,sans-serif" font-size="7" fill="#004d5a" font-weight="700">Valombreuse</text>
+              <circle cx="254" cy="126" r="9" fill="#86efac" stroke="#15803d" stroke-width="2"/>
+              <text x="254" y="131" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🌸</text>
+              <text x="268" y="118" font-family="Nunito,sans-serif" font-size="7" fill="#14532d" font-weight="700">Valombreuse</text>
             </g>
 
-            <!-- Route path layer (drawn dynamically) -->
-            <g id="route-layer"></g>
+            <!-- MALENDURE (côté caraïbes BT, mi-hauteur) -->
+            <g id="loc-malendure">
+              <circle cx="104" cy="218" r="10" fill="#22d3ee" stroke="#0e7490" stroke-width="2"/>
+              <text x="104" y="223" text-anchor="middle" font-family="Nunito,sans-serif" font-size="11">🤿</text>
+              <text x="84" y="209" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#0c4a6e" font-weight="700">Malendure</text>
+              <text x="84" y="218" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#0e7490">+ Îlets Pigeon</text>
+            </g>
 
-            <!-- Active pulse layer -->
+            <!-- DESHAIES + Jardin botanique (nord-ouest BT) -->
+            <g id="loc-deshaies">
+              <circle cx="118" cy="92" r="11" fill="#f472b6" stroke="#9d174d" stroke-width="2.5"/>
+              <text x="118" y="97" text-anchor="middle" font-family="Nunito,sans-serif" font-size="12">🌺</text>
+              <text x="134" y="83" font-family="Nunito,sans-serif" font-size="7" fill="#831843" font-weight="700">Jardin botanique</text>
+              <text x="134" y="92" font-family="Nunito,sans-serif" font-size="7" fill="#9d174d">+ Grande-Anse</text>
+              <text x="134" y="101" font-family="Nunito,sans-serif" font-size="7" fill="#be185d">Deshaies</text>
+            </g>
+
+            <!-- SOUFRIERE (sud BT, correct !) -->
+            <g id="loc-soufriere">
+              <polygon points="140,296 152,272 164,296" fill="#6b7280" stroke="#374151" stroke-width="2"/>
+              <ellipse cx="152" cy="270" rx="7" ry="5" fill="#e5e7eb" opacity="0.9"/>
+              <text x="152" y="264" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🌋</text>
+              <text x="168" y="290" font-family="Nunito,sans-serif" font-size="7" fill="#374151" font-weight="700">Soufrière</text>
+            </g>
+
+            <!-- POMPIERRE + Pain de Sucre (Saintes, île droite) -->
+            <g id="loc-pompierre">
+              <circle cx="184" cy="408" r="9" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>
+              <text x="184" y="413" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏖️</text>
+              <text x="200" y="402" font-family="Nunito,sans-serif" font-size="7" fill="#78350f" font-weight="700">Pompierre</text>
+              <text x="200" y="411" font-family="Nunito,sans-serif" font-size="7" fill="#92400e">+ Pain de Sucre</text>
+            </g>
+
+            <!-- FORT NAPOLEON (Saintes, île gauche) -->
+            <g id="loc-fort">
+              <circle cx="138" cy="408" r="8" fill="#c4b5fd" stroke="#7c3aed" stroke-width="2"/>
+              <text x="138" y="413" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9">🏰</text>
+              <text x="120" y="422" text-anchor="middle" font-family="Nunito,sans-serif" font-size="7" fill="#4c1d95" font-weight="700">Fort Napoléon</text>
+            </g>
+
+            <!-- Couches dynamiques -->
+            <g id="route-layer"></g>
             <g id="pulse-layer"></g>
 
             <!-- Boussole -->
-            <g transform="translate(476, 36)">
-              <circle r="20" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-              <text y="-6" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="#fff" font-weight="700">N</text>
+            <g transform="translate(486, 36)">
+              <circle r="20" fill="rgba(255,255,255,0.28)" stroke="rgba(255,255,255,0.55)" stroke-width="1.5"/>
+              <text y="-6" text-anchor="middle" font-family="Nunito,sans-serif" font-size="9" fill="#fff" font-weight="800">N</text>
               <line x1="0" y1="-3" x2="0" y2="-14" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round"/>
-              <line x1="0" y1="3" x2="0" y2="14" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round"/>
-              <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(255,255,255,0.6)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="0" y1="3" x2="0" y2="14" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round"/>
             </g>
 
-            <!-- Scale -->
-            <g transform="translate(20, 455)">
-              <line x1="0" y1="0" x2="40" y2="0" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
-              <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
-              <line x1="40" y1="-4" x2="40" y2="4" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
-              <text x="20" y="-8" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="rgba(255,255,255,0.8)">~20 km</text>
+            <!-- Échelle -->
+            <g transform="translate(20, 476)">
+              <line x1="0" y1="0" x2="40" y2="0" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/>
+              <line x1="40" y1="-4" x2="40" y2="4" stroke="rgba(255,255,255,0.85)" stroke-width="1.5"/>
+              <text x="20" y="-8" text-anchor="middle" font-family="Nunito,sans-serif" font-size="8" fill="rgba(255,255,255,0.85)">~20 km</text>
             </g>
           </svg>
         </div>
@@ -539,8 +591,8 @@ const DAYS = [
     fact: "La Guadeloupe a la forme d'un papillon ! Les deux îles principales sont reliées par un pont sur un bras de mer appelé la Rivière Salée.",
     factTitle: "Le savais-tu ?",
     transport: "✈️ Vol depuis Montréal · 🚗 Voiture de location à l'aéroport",
-    routes: [{ from: {x:272,y:178}, to: {x:360,y:248}, color:"#a78bfa" }],
-    pulses: [{x:272,y:178}, {x:360,y:248}]
+    routes: [{ from: {x:270,y:192}, to: {x:400,y:220}, color:"#a78bfa" }],
+    pulses: [{x:270,y:192}, {x:400,y:220}]
   },
   {
     id: 2, date: "13 avr.", label: "Marché & plage", icon: "🏪", color: "#f6d55c",
@@ -550,8 +602,8 @@ const DAYS = [
     fact: "La Guadeloupe produit de délicieux fruits tropicaux : mangues, papayes, ananas, corossols... Le marché est l'endroit idéal pour les goûter tous !",
     factTitle: "Les fruits tropicaux !",
     transport: "🚗 Saint-François → Sainte-Anne : 15 min",
-    routes: [{ from: {x:360,y:248}, to: {x:328,y:264}, color:"#f6d55c" }],
-    pulses: [{x:360,y:248}]
+    routes: [{ from: {x:400,y:220}, to: {x:358,y:248}, color:"#f6d55c" }],
+    pulses: [{x:400,y:220}, {x:358,y:248}]
   },
   {
     id: 3, date: "14 avr.", label: "Tortues !", icon: "🐢", color: "#34d399",
@@ -561,11 +613,8 @@ const DAYS = [
     fact: "Les tortues marines de Guadeloupe peuvent vivre plus de 80 ans ! Elles reviennent toujours sur la plage où elles sont nées pour pondre leurs œufs. Ne les touche jamais, c'est leur règle !",
     factTitle: "Les tortues marines",
     transport: "🚗 Saint-François → Anse Gourde : 5 min seulement !",
-    routes: [
-      { from: {x:360,y:248}, to: {x:378,y:224}, color:"#34d399" },
-      { from: {x:378,y:224}, to: {x:368,y:238}, color:"#34d399" }
-    ],
-    pulses: [{x:360,y:248}, {x:378,y:224}]
+    routes: [{ from: {x:400,y:220}, to: {x:426,y:168}, color:"#34d399" }],
+    pulses: [{x:400,y:220}, {x:426,y:168}]
   },
   {
     id: 4, date: "15 avr.", label: "Canne & snorkeling", icon: "🎋", color: "#fb923c",
@@ -575,8 +624,11 @@ const DAYS = [
     fact: "La canne à sucre a été cultivée en Guadeloupe depuis le 17ème siècle. Une tige de canne peut mesurer jusqu'à 4 mètres de haut ! Le jus de canne s'appelle le 'vesou' en créole.",
     factTitle: "La canne à sucre",
     transport: "🚗 → Maison Canne ~20 min · Anse Gourde ~5 min de St-François",
-    routes: [{ from: {x:360,y:248}, to: {x:378,y:224}, color:"#fb923c" }],
-    pulses: [{x:360,y:248}, {x:378,y:224}]
+    routes: [
+      { from: {x:400,y:220}, to: {x:308,y:164}, color:"#fb923c" },
+      { from: {x:400,y:220}, to: {x:426,y:168}, color:"#fb923c" }
+    ],
+    pulses: [{x:400,y:220}, {x:308,y:164}, {x:426,y:168}]
   },
   {
     id: 5, date: "16 avr.", label: "Ferry 9h00 !", icon: "⛵", color: "#ff6b6b",
@@ -587,10 +639,10 @@ const DAYS = [
     factTitle: "Les Îles des Saintes",
     transport: "⛵ Ferry Trois-Rivières → Terre-de-Haut · Départ 9h00, arrivée 9h25",
     routes: [
-      { from: {x:360,y:248}, to: {x:178,y:308}, color:"#ff6b6b", dashed: true },
-      { from: {x:178,y:308}, to: {x:162,y:378}, color:"#ff6b6b" }
+      { from: {x:400,y:220}, to: {x:128,y:318}, color:"#ff6b6b", dashed: true },
+      { from: {x:128,y:318}, to: {x:155,y:402}, color:"#ff6b6b" }
     ],
-    pulses: [{x:178,y:308}, {x:162,y:378}]
+    pulses: [{x:128,y:318}, {x:155,y:402}]
   },
   {
     id: 6, date: "17 avr.", label: "Explorer les Saintes", icon: "🏰", color: "#ff6b6b",
@@ -601,7 +653,7 @@ const DAYS = [
     factTitle: "Le Pain de Sucre",
     transport: "🚶 Tout à pied ou en petit train · Pas de voiture sur l'île !",
     routes: [],
-    pulses: [{x:162,y:378}]
+    pulses: [{x:155,y:402}, {x:138,y:408}, {x:184,y:408}]
   },
   {
     id: 7, date: "18 avr.", label: "Retour + café Jarry", icon: "🛳️", color: "#4ecdc4",
@@ -612,25 +664,25 @@ const DAYS = [
     factTitle: "Jarry, grand carrefour !",
     transport: "⛵ Ferry 13h15 retour · 🚗 → Jarry ~35 min · → logement D23 ~15 min",
     routes: [
-      { from: {x:162,y:378}, to: {x:178,y:308}, color:"#4ecdc4" },
-      { from: {x:178,y:308}, to: {x:272,y:178}, color:"#4ecdc4", dashed: true },
-      { from: {x:272,y:178}, to: {x:232,y:162}, color:"#4ecdc4" }
+      { from: {x:155,y:402}, to: {x:128,y:318}, color:"#4ecdc4" },
+      { from: {x:128,y:318}, to: {x:248,y:168}, color:"#4ecdc4", dashed: true },
+      { from: {x:248,y:168}, to: {x:210,y:152}, color:"#4ecdc4" }
     ],
-    pulses: [{x:162,y:378}, {x:272,y:178}, {x:232,y:162}]
+    pulses: [{x:155,y:402}, {x:128,y:318}, {x:248,y:168}, {x:210,y:152}]
   },
   {
-    id: 8, date: "19 avr.", label: "Zoo & cascade !", icon: "🦎", color: "#4ecdc4",
+    id: 8, date: "19 avr.", label: "Zoo & cascade !", icon: "🦎", color: "#f97316",
     zone: "D23 · Forêt tropicale", zoneBg: "#ccfbf1", zoneFg: "#042f2e",
     morning: "Zoo de Guadeloupe 🦎\n(5 min du logement, sur la D23 !)\nIguanes géants, singes araignées, jaguar\nOcelots, ratons laveurs, perroquets\nPonts de singe en cime des arbres !",
     afternoon: "Cascade aux Écrevisses 💧\n(3 minutes à pied du logement !)\nSentier pavé 100% accessible poussette\nBassin turquoise, 10m de haut\n→ Aller tôt le matin ou tard : moins de monde",
     fact: "Le Zoo de Guadeloupe est situé au cœur de la forêt tropicale sur la route de la Traversée (D23). Il abrite 450 animaux de 85 espèces différentes, dont des animaux qu'on ne trouve qu'aux Caraïbes comme le raton laveur de Guadeloupe !",
     factTitle: "Le Zoo dans la jungle !",
-    transport: "🚶 Zoo : 5 min voiture depuis logement D23 · Cascade : 3 min à pied !",
+    transport: "🚗 Zoo : 5 min depuis D23 · 🚶 Cascade : 3 min à pied !",
     routes: [
-      { from: {x:232,y:162}, to: {x:244,y:158}, color:"#4ecdc4" },
-      { from: {x:244,y:158}, to: {x:232,y:152}, color:"#4ecdc4" }
+      { from: {x:210,y:152}, to: {x:236,y:148}, color:"#f97316" },
+      { from: {x:210,y:152}, to: {x:196,y:128}, color:"#60a5fa" }
     ],
-    pulses: [{x:232,y:162}, {x:244,y:158}]
+    pulses: [{x:210,y:152}, {x:236,y:148}, {x:196,y:128}]
   },
   {
     id: 9, date: "20 avr.", label: "Jardins & tortues", icon: "🌸", color: "#0ea5e9",
@@ -641,10 +693,10 @@ const DAYS = [
     factTitle: "La Réserve Cousteau",
     transport: "🚗 D23 → Valombreuse : 10 min · → Malendure : 15 min au sud",
     routes: [
-      { from: {x:232,y:162}, to: {x:268,y:132}, color:"#0ea5e9" },
-      { from: {x:232,y:162}, to: {x:118,y:224}, color:"#0ea5e9" }
+      { from: {x:210,y:152}, to: {x:254,y:126}, color:"#86efac" },
+      { from: {x:210,y:152}, to: {x:104,y:218}, color:"#22d3ee" }
     ],
-    pulses: [{x:232,y:162}, {x:268,y:132}, {x:118,y:224}]
+    pulses: [{x:210,y:152}, {x:254,y:126}, {x:104,y:218}]
   },
   {
     id: 10, date: "21 avr.", label: "Jardin magique", icon: "🦩", color: "#ec4899",
@@ -654,8 +706,8 @@ const DAYS = [
     fact: "Le jardin botanique de Deshaies a été créé par l'humoriste français Coluche ! Après sa mort en 1986, sa famille a transformé son domaine en ce jardin magnifique. Il accueille aujourd'hui des centaines d'espèces tropicales.",
     factTitle: "Le jardin de Coluche !",
     transport: "🚗 D23 → Deshaies : 40 min par la côte Caraïbes",
-    routes: [{ from: {x:232,y:162}, to: {x:132,y:116}, color:"#ec4899" }],
-    pulses: [{x:232,y:162}, {x:132,y:116}]
+    routes: [{ from: {x:210,y:152}, to: {x:118,y:92}, color:"#f472b6" }],
+    pulses: [{x:210,y:152}, {x:118,y:92}]
   },
   {
     id: 11, date: "22 avr.", label: "Au revoir ! ✈️", icon: "✈️", color: "#a78bfa",
@@ -665,8 +717,8 @@ const DAYS = [
     fact: "L'aéroport de Pointe-à-Pitre s'appelle 'Pôle Caraïbes'. C'est l'un des plus grands aéroports des Antilles françaises, avec plus de 2 millions de passagers chaque année !",
     factTitle: "L'aéroport Pôle Caraïbes",
     transport: "🚗 D23 → PTP : 45 min · ✈️ Vol 13h retour Montréal",
-    routes: [{ from: {x:232,y:162}, to: {x:272,y:178}, color:"#a78bfa" }],
-    pulses: [{x:232,y:162}, {x:272,y:178}]
+    routes: [{ from: {x:210,y:152}, to: {x:270,y:192}, color:"#a78bfa" }],
+    pulses: [{x:210,y:152}, {x:270,y:192}]
   }
 ];
 
