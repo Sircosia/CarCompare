@@ -441,6 +441,14 @@
               <text x="438" y="169" font-family="Nunito,sans-serif" font-size="7" fill="#065f46">+ Caravelle</text>
             </g>
 
+            <!-- PLAGE DU SOUFFLEUR (nord Grande-Terre, Port-Louis) -->
+            <g id="loc-souffleur-plage">
+              <circle cx="302" cy="96" r="9" fill="#38bdf8" stroke="#0369a1" stroke-width="2"/>
+              <text x="302" y="101" text-anchor="middle" font-family="Nunito,sans-serif" font-size="10">🏖️</text>
+              <text x="316" y="90" font-family="Nunito,sans-serif" font-size="7" fill="#0c4a6e" font-weight="700">Souffleur</text>
+              <text x="316" y="99" font-family="Nunito,sans-serif" font-size="7" fill="#0369a1">Port-Louis</text>
+            </g>
+
             <!-- MAISON DE LA CANNE (centre GT, vers nord-ouest) -->
             <g id="loc-canne">
               <circle cx="308" cy="164" r="9" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
@@ -617,18 +625,18 @@ const DAYS = [
     pulses: [{x:400,y:220}, {x:426,y:168}]
   },
   {
-    id: 4, date: "15 avr.", label: "Canne & snorkeling", icon: "🎋", color: "#fb923c",
-    zone: "Grande-Terre · Saint-François", zoneBg: "#fff7ed", zoneFg: "#7c2d12",
+    id: 4, date: "15 avr.", label: "Canne & Souffleur", icon: "🎋", color: "#fb923c",
+    zone: "Grande-Terre · Saint-François → Port-Louis", zoneBg: "#fff7ed", zoneFg: "#7c2d12",
     morning: "Maison de la Canne à sucre 🎋\nVisite guidée ~1h\nComment on fabrique le rhum et le sucre !\n(sur Grande-Terre, proche du logement)",
-    afternoon: "Plage de l'Anse à la Gourde 🐢\nDernière baignade + snorkeling côté Atlantique\nPréparation des bagages ce soir !\n(départ pour les Saintes demain matin à 7h)",
-    fact: "La canne à sucre a été cultivée en Guadeloupe depuis le 17ème siècle. Une tige de canne peut mesurer jusqu'à 4 mètres de haut ! Le jus de canne s'appelle le 'vesou' en créole.",
-    factTitle: "La canne à sucre",
-    transport: "🚗 → Maison Canne ~20 min · Anse Gourde ~5 min de St-François",
+    afternoon: "Plage du Souffleur – Port-Louis 🏖️\n(nord de Grande-Terre)\nSable blanc, eau turquoise calme, peu profonde\nVue sur la Soufrière au loin !\nIdéale famille, snorkeling facile\nBokits et lolos sur la plage 🥪",
+    fact: "La plage du Souffleur tire son nom d'un phénomène naturel spectaculaire : l'eau de mer s'engouffre dans une cavité rocheuse et jaillit comme un geyser ! Elle offre une des plus belles vues sur la Soufrière depuis Grande-Terre.",
+    factTitle: "Le Souffleur naturel !",
+    transport: "🚗 → Maison Canne ~20 min · → Port-Louis Souffleur ~45 min nord",
     routes: [
       { from: {x:400,y:220}, to: {x:308,y:164}, color:"#fb923c" },
-      { from: {x:400,y:220}, to: {x:426,y:168}, color:"#fb923c" }
+      { from: {x:308,y:164}, to: {x:302,y:96}, color:"#fb923c" }
     ],
-    pulses: [{x:400,y:220}, {x:308,y:164}, {x:426,y:168}]
+    pulses: [{x:400,y:220}, {x:308,y:164}, {x:302,y:96}]
   },
   {
     id: 5, date: "16 avr.", label: "Ferry 9h00 !", icon: "⛵", color: "#ff6b6b",
