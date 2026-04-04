@@ -1,0 +1,543 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans, sans-serif); }
+
+.app { padding: 1rem 0; }
+
+.filter-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;
+  align-items: center;
+}
+.filter-label {
+  font-size: 12px; color: var(--color-text-secondary); font-weight: 500;
+  margin-right: 4px; min-width: 60px;
+}
+.pill {
+  font-size: 12px; padding: 4px 10px; border-radius: 20px; cursor: pointer;
+  border: 0.5px solid var(--color-border-secondary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  transition: all 0.15s;
+  user-select: none;
+}
+.pill.active {
+  background: var(--color-background-info);
+  border-color: var(--color-border-info);
+  color: var(--color-text-info);
+  font-weight: 500;
+}
+.pill:hover { border-color: var(--color-border-primary); }
+
+.separator { width: 1px; height: 24px; background: var(--color-border-tertiary); margin: 0 4px; }
+
+.pan-area {
+  position: relative;
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  min-height: 420px;
+  overflow: visible;
+  margin-bottom: 1.5rem;
+}
+
+.pan-img-zone {
+  width: 100%; min-height: 400px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.pan-placeholder {
+  width: 100%; min-height: 380px;
+  position: relative;
+  overflow: visible;
+}
+
+.bubble {
+  position: absolute;
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 6px 10px;
+  font-size: 11px;
+  min-width: 110px;
+  max-width: 150px;
+  cursor: pointer;
+  transition: all 0.15s;
+  z-index: 10;
+  box-shadow: none;
+}
+.bubble.hidden { opacity: 0.12; pointer-events: none; }
+.bubble.highlighted {
+  border-color: var(--color-border-info);
+  background: var(--color-background-info);
+  z-index: 20;
+}
+.bubble .wire-code {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.03em;
+  margin-bottom: 2px;
+}
+.bubble .wire-desc {
+  font-size: 10px; color: var(--color-text-secondary); line-height: 1.4;
+}
+.wire-swatch {
+  display: inline-block; width: 10px; height: 10px;
+  border-radius: 2px; margin-right: 4px;
+  vertical-align: middle; border: 0.5px solid rgba(0,0,0,0.15);
+}
+
+.connector-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  z-index: 15;
+  transition: all 0.15s;
+}
+.connector-dot:hover { transform: scale(1.4); }
+.connector-dot.hidden { opacity: 0.15; }
+.connector-dot.highlighted { transform: scale(1.5); box-shadow: 0 0 0 3px var(--color-border-info); }
+
+.legend {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.75rem;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--color-text-secondary);
+}
+
+.wire-list {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+.wire-row {
+  display: grid; grid-template-columns: 80px 1fr 2fr 1.2fr;
+  padding: 8px 12px; font-size: 12px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  align-items: center; gap: 8px;
+  transition: background 0.1s;
+  cursor: pointer;
+}
+.wire-row:last-child { border-bottom: none; }
+.wire-row:hover { background: var(--color-background-secondary); }
+.wire-row.hidden { opacity: 0.25; }
+.wire-row.highlighted { background: var(--color-background-info); }
+.wire-row-header {
+  font-size: 11px; font-weight: 500; color: var(--color-text-secondary);
+  background: var(--color-background-secondary);
+  padding: 6px 12px;
+  display: grid; grid-template-columns: 80px 1fr 2fr 1.2fr; gap: 8px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.group-header {
+  padding: 6px 12px; font-size: 11px; font-weight: 500;
+  background: var(--color-background-tertiary);
+  color: var(--color-text-secondary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+
+.section-title {
+  font-size: 14px; font-weight: 500; color: var(--color-text-primary);
+  margin: 1.5rem 0 0.75rem;
+}
+
+svg.pan-svg { width: 100%; height: 100%; }
+</style>
+
+<div class="app">
+
+<div class="filter-bar">
+  <span class="filter-label">View by:</span>
+  <span class="pill active" onclick="setMode('all')">All wires</span>
+  <div class="separator"></div>
+  <span class="filter-label">Harness:</span>
+  <span class="pill" onclick="setMode('harness','main')">Main</span>
+  <span class="pill" onclick="setMode('harness','charging')">Charging</span>
+  <span class="pill" onclick="setMode('harness','ignition')">Ignition</span>
+  <span class="pill" onclick="setMode('harness','lighting')">Lighting</span>
+  <span class="pill" onclick="setMode('harness','awd')">AWD</span>
+  <div class="separator"></div>
+  <span class="filter-label">Function:</span>
+  <span class="pill" onclick="setMode('group','ignition')">Ignition / CDI</span>
+  <span class="pill" onclick="setMode('group','starting')">Starting</span>
+  <span class="pill" onclick="setMode('group','charging')">Charging</span>
+  <span class="pill" onclick="setMode('group','lights')">Lights</span>
+  <span class="pill" onclick="setMode('group','switches')">Switches</span>
+  <span class="pill" onclick="setMode('group','awd')">AWD</span>
+  <span class="pill" onclick="setMode('group','sensors')">Sensors / Aux</span>
+</div>
+
+<div class="pan-area" id="pan-area">
+  <div class="pan-placeholder" id="pan-svg-wrap">
+
+    <svg viewBox="0 0 680 420" width="100%" xmlns="http://www.w3.org/2000/svg" id="pan-svg">
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- PlugPan schematic background -->
+      <rect x="210" y="30" width="260" height="360" rx="14" fill="#2a2a2a" stroke="#555" stroke-width="1"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="11" fill="#888" x="340" y="22" text-anchor="middle">PLUG PAN — 1998 Polaris Magnum 4×4</text>
+
+      <!-- Connector blocks inside pan -->
+      <!-- Row 1 - top connectors -->
+      <rect x="225" y="50" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="250" y="68" text-anchor="middle">CDI</text>
+
+      <rect x="285" y="50" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="310" y="68" text-anchor="middle">KEY SW</text>
+
+      <rect x="345" y="50" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="370" y="68" text-anchor="middle">HEADLT</text>
+
+      <rect x="405" y="50" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="430" y="68" text-anchor="middle">START</text>
+
+      <!-- Row 2 -->
+      <rect x="225" y="95" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="250" y="113" text-anchor="middle">STATOR</text>
+
+      <rect x="285" y="95" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="310" y="113" text-anchor="middle">REGUL</text>
+
+      <rect x="345" y="95" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="370" y="113" text-anchor="middle">IGN COIL</text>
+
+      <rect x="405" y="95" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="430" y="113" text-anchor="middle">BATT</text>
+
+      <!-- Row 3 -->
+      <rect x="225" y="140" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="250" y="158" text-anchor="middle">AWD HUB</text>
+
+      <rect x="285" y="140" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="310" y="158" text-anchor="middle">AWD CTL</text>
+
+      <rect x="345" y="140" width="70" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="380" y="158" text-anchor="middle">TRANS SW</text>
+
+      <rect x="425" y="140" width="30" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="440" y="158" text-anchor="middle">FAN</text>
+
+      <!-- Row 4 -->
+      <rect x="225" y="185" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="250" y="203" text-anchor="middle">SPD LMT</text>
+
+      <rect x="285" y="185" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="310" y="203" text-anchor="middle">AUX SW</text>
+
+      <rect x="345" y="185" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="370" y="203" text-anchor="middle">NEUTRAL</text>
+
+      <rect x="405" y="185" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="430" y="203" text-anchor="middle">BRAKE</text>
+
+      <!-- Row 5 -->
+      <rect x="225" y="230" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="250" y="248" text-anchor="middle">GROUND</text>
+
+      <rect x="285" y="230" width="50" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="310" y="248" text-anchor="middle">BKLT BRK</text>
+
+      <rect x="345" y="230" width="115" height="28" rx="4" fill="#3a3a3a" stroke="#666" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#aaa" x="402" y="248" text-anchor="middle">HEADLAMP SW</text>
+
+      <!-- Row 6 wire bundle representation -->
+      <rect x="225" y="275" width="230" height="40" rx="6" fill="#1e1e1e" stroke="#555" stroke-width="0.5"/>
+      <text font-family="var(--font-sans,sans-serif)" font-size="9" fill="#777" x="340" y="299" text-anchor="middle">MAIN WIRE BUNDLE — multi-color harness</text>
+
+      <!-- Connector dots - these are the clickable pins -->
+      <!-- CDI pins -->
+      <circle id="dot-WL" cx="228" cy="57" r="4" fill="#f0f0f0" stroke="#888" stroke-width="1" class="c-dot" data-wire="WL" style="cursor:pointer"/>
+      <circle id="dot-WR" cx="240" cy="57" r="4" fill="#f0f0f0" stroke="#c00" stroke-width="1" class="c-dot" data-wire="WR" style="cursor:pointer"/>
+      <circle id="dot-BR_cdi" cx="252" cy="57" r="4" fill="#8B4513" stroke="#8B4513" stroke-width="1" class="c-dot" data-wire="BR" style="cursor:pointer"/>
+      <circle id="dot-BW" cx="264" cy="57" r="4" fill="#2222ff" stroke="#fff" stroke-width="1" class="c-dot" data-wire="BW" style="cursor:pointer"/>
+
+      <!-- Stator pins -->
+      <circle id="dot-YBr" cx="228" cy="102" r="4" fill="#e8e800" stroke="#8B4513" stroke-width="1.5" class="c-dot" data-wire="YBr" style="cursor:pointer"/>
+      <circle id="dot-YR" cx="240" cy="102" r="4" fill="#e8e800" stroke="#c00" stroke-width="1.5" class="c-dot" data-wire="YR" style="cursor:pointer"/>
+      <circle id="dot-BR_st" cx="252" cy="102" r="4" fill="#8B4513" stroke="#c00" stroke-width="1.5" class="c-dot" data-wire="BR_R" style="cursor:pointer"/>
+
+      <!-- Regulator pins -->
+      <circle id="dot-YBr2" cx="288" cy="102" r="4" fill="#e8e800" stroke="#8B4513" stroke-width="1.5" class="c-dot" data-wire="YBr" style="cursor:pointer"/>
+      <circle id="dot-YR2" cx="300" cy="102" r="4" fill="#e8e800" stroke="#c00" stroke-width="1.5" class="c-dot" data-wire="YR2" style="cursor:pointer"/>
+      <circle id="dot-YRY" cx="312" cy="102" r="4" fill="#e8e800" stroke="#c00" stroke-width="1.5" class="c-dot" data-wire="YRY" style="cursor:pointer"/>
+
+      <!-- Key switch pins -->
+      <circle id="dot-RB" cx="288" cy="57" r="4" fill="#c00" stroke="#2222ff" stroke-width="1.5" class="c-dot" data-wire="RB" style="cursor:pointer"/>
+      <circle id="dot-R_key" cx="300" cy="57" r="4" fill="#c00" stroke="#c00" stroke-width="1" class="c-dot" data-wire="R" style="cursor:pointer"/>
+      <circle id="dot-BR_key" cx="312" cy="57" r="4" fill="#8B4513" stroke="#8B4513" stroke-width="1" class="c-dot" data-wire="Br" style="cursor:pointer"/>
+
+      <!-- Start button pins -->
+      <circle id="dot-RW_st" cx="408" cy="57" r="4" fill="#c00" stroke="#f0f0f0" stroke-width="1.5" class="c-dot" data-wire="RW_start" style="cursor:pointer"/>
+      <circle id="dot-WR_st" cx="422" cy="57" r="4" fill="#f0f0f0" stroke="#c00" stroke-width="1.5" class="c-dot" data-wire="WR_start" style="cursor:pointer"/>
+      <circle id="dot-WRR" cx="436" cy="57" r="4" fill="#f0f0f0" stroke="#c00" stroke-width="1.5" class="c-dot" data-wire="WRR" style="cursor:pointer"/>
+
+      <!-- Headlight pins -->
+      <circle id="dot-GY" cx="348" cy="57" r="4" fill="#888" stroke="#e8e800" stroke-width="1.5" class="c-dot" data-wire="GY" style="cursor:pointer"/>
+      <circle id="dot-Br_hl" cx="360" cy="57" r="4" fill="#8B4513" stroke="#8B4513" stroke-width="1" class="c-dot" data-wire="Br_hl" style="cursor:pointer"/>
+      <circle id="dot-GW" cx="372" cy="57" r="4" fill="#888" stroke="#f0f0f0" stroke-width="1.5" class="c-dot" data-wire="GW" style="cursor:pointer"/>
+
+      <!-- Battery pins -->
+      <circle id="dot-R_batt" cx="408" cy="102" r="5" fill="#c00" stroke="#c00" stroke-width="1" class="c-dot" data-wire="R_batt" style="cursor:pointer"/>
+      <circle id="dot-B_gnd" cx="422" cy="102" r="5" fill="#111" stroke="#555" stroke-width="1" class="c-dot" data-wire="B_gnd" style="cursor:pointer"/>
+
+      <!-- AWD hub pins -->
+      <circle id="dot-BR_awd" cx="228" cy="147" r="4" fill="#8B4513" stroke="#8B4513" stroke-width="1" class="c-dot" data-wire="Br_awd" style="cursor:pointer"/>
+      <circle id="dot-Gr" cx="240" cy="147" r="4" fill="#226622" stroke="#226622" stroke-width="1" class="c-dot" data-wire="Gr" style="cursor:pointer"/>
+
+      <!-- Fan -->
+      <circle id="dot-RW_fan" cx="428" cy="147" r="4" fill="#c00" stroke="#f0f0f0" stroke-width="1.5" class="c-dot" data-wire="RW_fan" style="cursor:pointer"/>
+
+      <!-- Ground -->
+      <circle id="dot-B_fr" cx="228" cy="237" r="5" fill="#111" stroke="#555" stroke-width="1" class="c-dot" data-wire="B_frame" style="cursor:pointer"/>
+      <circle id="dot-B_fr2" cx="242" cy="237" r="5" fill="#111" stroke="#555" stroke-width="1" class="c-dot" data-wire="B_frame2" style="cursor:pointer"/>
+
+      <!-- Speedometer -->
+      <circle id="dot-Go" cx="348" cy="192" r="4" fill="#888" stroke="#ff8800" stroke-width="1.5" class="c-dot" data-wire="GO" style="cursor:pointer"/>
+
+      <!-- Neutral lamp -->
+      <circle id="dot-GrO" cx="348" cy="192" r="4" fill="#226622" stroke="#ff8800" stroke-width="1.5" style="display:none"/>
+
+      <!-- Brake switch -->
+      <circle id="dot-RW_br" cx="408" cy="192" r="4" fill="#c00" stroke="#f0f0f0" stroke-width="1.5" class="c-dot" data-wire="RW_brake" style="cursor:pointer"/>
+      <circle id="dot-BO_br" cx="422" cy="192" r="4" fill="#111" stroke="#ff8800" stroke-width="1.5" class="c-dot" data-wire="BO_brake" style="cursor:pointer"/>
+
+    </svg>
+
+  </div>
+
+  <!-- Floating bubbles -->
+  <div id="bubbles-container" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
+  </div>
+</div>
+
+<p class="section-title">Wire index — 1998 Polaris Magnum 4×4</p>
+
+<div class="wire-list" id="wire-list">
+  <div class="wire-row-header">
+    <span>Color code</span>
+    <span>Component</span>
+    <span>Function / destination</span>
+    <span>Harness / group</span>
+  </div>
+</div>
+
+<div class="legend" id="legend">
+  <span style="font-size:11px;color:var(--color-text-secondary);font-weight:500;">Color key:</span>
+</div>
+
+</div>
+
+<script>
+const WIRES = [
+  { id:'WL',      code:'W/L',    swatch:'#f0f0f0', swatchBorder:'#3399ff', component:'CDI unit',         func:'CDI → ignition coil primary',            harness:'ignition', group:'ignition' },
+  { id:'WR',      code:'W/R',    swatch:'#f0f0f0', swatchBorder:'#cc0000', component:'CDI unit',         func:'CDI pulse signal from stator',           harness:'ignition', group:'ignition' },
+  { id:'BR',      code:'B/R',    swatch:'#8B4513', swatchBorder:'#cc0000', component:'CDI unit',         func:'CDI ground / frame',                     harness:'ignition', group:'ignition' },
+  { id:'BW',      code:'B/W',    swatch:'#2222ff', swatchBorder:'#f0f0f0', component:'CDI unit',         func:'CDI power (key switched)',               harness:'ignition', group:'ignition' },
+  { id:'Br',      code:'Br',     swatch:'#8B4513', swatchBorder:'#8B4513', component:'Ignition coil',    func:'Ignition coil primary → CDI',            harness:'ignition', group:'ignition' },
+  { id:'BR_R',    code:'Br/R',   swatch:'#8B4513', swatchBorder:'#cc0000', component:'Stator',           func:'Stator CDI coil output',                 harness:'charging', group:'charging' },
+  { id:'YBr',     code:'Y/Br',   swatch:'#e8e800', swatchBorder:'#8B4513', component:'Stator',           func:'Stator AC output → regulator',           harness:'charging', group:'charging' },
+  { id:'YR',      code:'Y/R',    swatch:'#e8e800', swatchBorder:'#cc0000', component:'Stator',           func:'Stator AC phase 2 → regulator',          harness:'charging', group:'charging' },
+  { id:'YR2',     code:'Y/R',    swatch:'#e8e800', swatchBorder:'#cc0000', component:'Regulator',        func:'Regulator DC output → battery (+)',      harness:'charging', group:'charging' },
+  { id:'YRY',     code:'Y/R/Y',  swatch:'#e8e800', swatchBorder:'#cc0000', component:'Regulator',        func:'Regulator voltage sense',                harness:'charging', group:'charging' },
+  { id:'R_batt',  code:'R',      swatch:'#cc0000', swatchBorder:'#cc0000', component:'Battery',          func:'Battery (+) supply → starter solenoid', harness:'main',     group:'starting' },
+  { id:'B_gnd',   code:'B',      swatch:'#111111', swatchBorder:'#555',    component:'Battery',          func:'Battery (−) frame ground',               harness:'main',     group:'starting' },
+  { id:'RW_start',code:'R/W',    swatch:'#cc0000', swatchBorder:'#f0f0f0', component:'Start button',     func:'Start button → starter solenoid',        harness:'main',     group:'starting' },
+  { id:'WR_start',code:'W/R',    swatch:'#f0f0f0', swatchBorder:'#cc0000', component:'Start button',     func:'Start circuit power (key on)',           harness:'main',     group:'starting' },
+  { id:'WRR',     code:'W/R',    swatch:'#f0f0f0', swatchBorder:'#cc0000', component:'Starter solenoid', func:'Solenoid coil → frame ground',           harness:'main',     group:'starting' },
+  { id:'RB',      code:'R/B',    swatch:'#cc0000', swatchBorder:'#2222ff', component:'Key switch',       func:'Key switch battery feed in',             harness:'main',     group:'switches' },
+  { id:'R',       code:'R',      swatch:'#cc0000', swatchBorder:'#cc0000', component:'Key switch',       func:'Key switch ACC output',                  harness:'main',     group:'switches' },
+  { id:'GY',      code:'G/Y',    swatch:'#888888', swatchBorder:'#e8e800', component:'Headlight',        func:'Headlight low beam',                     harness:'lighting', group:'lights' },
+  { id:'GW',      code:'G/W',    swatch:'#888888', swatchBorder:'#f0f0f0', component:'Headlight',        func:'Headlight high beam',                    harness:'lighting', group:'lights' },
+  { id:'Br_hl',   code:'Br',     swatch:'#8B4513', swatchBorder:'#8B4513', component:'Headlight',        func:'Headlight ground return',                harness:'lighting', group:'lights' },
+  { id:'RW_fan',  code:'R/W',    swatch:'#cc0000', swatchBorder:'#f0f0f0', component:'Cooling fan',      func:'Fan motor power (from overheat switch)', harness:'main',     group:'sensors' },
+  { id:'Br_awd',  code:'Br',     swatch:'#8B4513', swatchBorder:'#8B4513', component:'AWD hub coil',     func:'AWD front hub coil ground',              harness:'awd',      group:'awd' },
+  { id:'Gr',      code:'Gr',     swatch:'#226622', swatchBorder:'#226622', component:'AWD hub coil',     func:'AWD front hub coil signal',              harness:'awd',      group:'awd' },
+  { id:'GO',      code:'G/O',    swatch:'#888888', swatchBorder:'#ff8800', component:'Speedometer',      func:'Speedometer lamp feed',                  harness:'lighting', group:'lights' },
+  { id:'RW_brake',code:'R/W',    swatch:'#cc0000', swatchBorder:'#f0f0f0', component:'Brake switch',     func:'Brake light power in',                   harness:'lighting', group:'lights' },
+  { id:'BO_brake',code:'B/O',    swatch:'#111111', swatchBorder:'#ff8800', component:'Brake switch',     func:'Brake lamp → taillight',                 harness:'lighting', group:'lights' },
+  { id:'B_frame', code:'B',      swatch:'#111111', swatchBorder:'#555',    component:'Frame ground',     func:'Main frame ground point 1',              harness:'main',     group:'starting' },
+  { id:'B_frame2',code:'B',      swatch:'#111111', swatchBorder:'#555',    component:'Frame ground',     func:'Main frame ground point 2',              harness:'main',     group:'starting' },
+];
+
+const GROUP_LABELS = {
+  ignition: 'Ignition / CDI system',
+  starting: 'Starting & battery',
+  charging: 'Charging / stator',
+  lights:   'Lighting',
+  switches: 'Switches & controls',
+  awd:      'AWD system',
+  sensors:  'Sensors & auxiliary',
+};
+
+const HARNESS_LABELS = {
+  main:     'Main harness',
+  charging: 'Charging harness',
+  ignition: 'Ignition harness',
+  lighting: 'Lighting harness',
+  awd:      'AWD harness',
+};
+
+let currentFilter = { type: 'all', value: null };
+let activeWire = null;
+
+function isVisible(wire) {
+  if (currentFilter.type === 'all') return true;
+  if (currentFilter.type === 'harness') return wire.harness === currentFilter.value;
+  if (currentFilter.type === 'group') return wire.group === currentFilter.value;
+  return true;
+}
+
+function setMode(type, value) {
+  currentFilter = { type, value };
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  renderList();
+  renderBubbles();
+  updateDots();
+}
+
+function renderList() {
+  const list = document.getElementById('wire-list');
+  list.innerHTML = `<div class="wire-row-header">
+    <span>Color code</span><span>Component</span><span>Function / destination</span><span>Harness / group</span>
+  </div>`;
+
+  const groups = {};
+  WIRES.forEach(w => {
+    if (!groups[w.group]) groups[w.group] = [];
+    groups[w.group].push(w);
+  });
+
+  Object.keys(groups).forEach(gk => {
+    const wires = groups[gk];
+    const anyVisible = wires.some(w => isVisible(w));
+    const div = document.createElement('div');
+    div.className = 'group-header';
+    div.style.opacity = anyVisible ? '1' : '0.3';
+    div.textContent = GROUP_LABELS[gk] || gk;
+    list.appendChild(div);
+
+    wires.forEach(w => {
+      const row = document.createElement('div');
+      row.className = 'wire-row' + (isVisible(w) ? '' : ' hidden') + (activeWire === w.id ? ' highlighted' : '');
+      row.innerHTML = `
+        <span><span class="wire-swatch" style="background:${w.swatch};border-color:${w.swatchBorder}"></span><strong>${w.code}</strong></span>
+        <span style="color:var(--color-text-primary)">${w.component}</span>
+        <span style="color:var(--color-text-secondary);font-size:11px">${w.func}</span>
+        <span style="color:var(--color-text-secondary);font-size:10px">${HARNESS_LABELS[w.harness] || w.harness}</span>
+      `;
+      row.onclick = () => selectWire(w.id);
+      list.appendChild(row);
+    });
+  });
+}
+
+const BUBBLE_POSITIONS = {
+  WL:       { x: 2, y: 5, anchor: 'right' },
+  WR:       { x: 2, y: 14, anchor: 'right' },
+  BR:       { x: 2, y: 23, anchor: 'right' },
+  BW:       { x: 2, y: 32, anchor: 'right' },
+  YBr:      { x: 2, y: 42, anchor: 'right' },
+  YR:       { x: 2, y: 51, anchor: 'right' },
+  BR_R:     { x: 2, y: 60, anchor: 'right' },
+  RB:       { x: 28, y: 5, anchor: 'right' },
+  R:        { x: 28, y: 14, anchor: 'right' },
+  Br:       { x: 28, y: 23, anchor: 'right' },
+  YR2:      { x: 28, y: 42, anchor: 'right' },
+  YRY:      { x: 28, y: 51, anchor: 'right' },
+  GY:       { x: 53, y: 5, anchor: 'right' },
+  GW:       { x: 53, y: 14, anchor: 'right' },
+  Br_hl:    { x: 53, y: 23, anchor: 'right' },
+  GO:       { x: 53, y: 42, anchor: 'right' },
+  RW_brake: { x: 53, y: 51, anchor: 'right' },
+  BO_brake: { x: 53, y: 60, anchor: 'right' },
+  RW_start: { x: 62, y: 5, anchor: 'left' },
+  WR_start: { x: 62, y: 14, anchor: 'left' },
+  WRR:      { x: 62, y: 23, anchor: 'left' },
+  R_batt:   { x: 62, y: 42, anchor: 'left' },
+  B_gnd:    { x: 62, y: 51, anchor: 'left' },
+  Br_awd:   { x: 2, y: 70, anchor: 'right' },
+  Gr:       { x: 2, y: 79, anchor: 'right' },
+  RW_fan:   { x: 62, y: 70, anchor: 'left' },
+  B_frame:  { x: 2, y: 88, anchor: 'right' },
+  B_frame2: { x: 2, y: 94, anchor: 'right' },
+};
+
+function renderBubbles() {
+  const container = document.getElementById('bubbles-container');
+  container.innerHTML = '';
+  const pan = document.getElementById('pan-area');
+  const pw = pan.offsetWidth || 680;
+  const ph = pan.offsetHeight || 420;
+
+  WIRES.forEach(w => {
+    const pos = BUBBLE_POSITIONS[w.id];
+    if (!pos) return;
+
+    const bub = document.createElement('div');
+    bub.className = 'bubble' + (isVisible(w) ? '' : ' hidden') + (activeWire === w.id ? ' highlighted' : '');
+    bub.style.pointerEvents = isVisible(w) ? 'auto' : 'none';
+
+    const isLeft = pos.anchor === 'right';
+    const leftPct = pos.x;
+    const topPct = pos.y;
+
+    bub.style.left = leftPct + '%';
+    bub.style.top = topPct + '%';
+
+    bub.innerHTML = `
+      <div class="wire-code"><span class="wire-swatch" style="background:${w.swatch};border-color:${w.swatchBorder}"></span>${w.code}</div>
+      <div class="wire-desc">${w.component}</div>
+      <div class="wire-desc" style="color:var(--color-text-tertiary)">${w.func.substring(0,45)}${w.func.length>45?'…':''}</div>
+    `;
+    bub.onclick = () => selectWire(w.id);
+    container.appendChild(bub);
+  });
+}
+
+function updateDots() {
+  document.querySelectorAll('.c-dot').forEach(dot => {
+    const wid = dot.dataset.wire;
+    const wire = WIRES.find(w => w.id === wid);
+    if (!wire) return;
+    dot.style.opacity = isVisible(wire) ? '1' : '0.15';
+    dot.style.transform = activeWire === wid ? 'scale(1.6)' : 'scale(1)';
+  });
+}
+
+function selectWire(id) {
+  activeWire = activeWire === id ? null : id;
+  renderList();
+  renderBubbles();
+  updateDots();
+}
+
+function renderLegend() {
+  const legend = document.getElementById('legend');
+  const seen = new Set();
+  WIRES.forEach(w => {
+    if (!seen.has(w.code)) {
+      seen.add(w.code);
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<span class="wire-swatch" style="background:${w.swatch};border-color:${w.swatchBorder}"></span><span>${w.code}</span>`;
+      legend.appendChild(item);
+    }
+  });
+}
+
+renderList();
+renderBubbles();
+renderLegend();
+
+document.querySelectorAll('.c-dot').forEach(dot => {
+  dot.addEventListener('click', () => selectWire(dot.dataset.wire));
+});
+</script>
